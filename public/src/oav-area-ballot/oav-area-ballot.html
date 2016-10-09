@@ -1,0 +1,477 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
+<link rel="import" href="../../bower_components/lodash-import/lodash.js.html">
+
+<link rel="import" href="../oav-ajax/oav-ajax.html">
+<link rel="import" href="oav-area-ballot-item.html">
+<link rel="import" href="encryption/ballot-encryption-behavior.html">
+<link rel="import" href="oav-items-map.html">
+
+<dom-module id="oav-area-ballot">
+  <style include="iron-flex iron-flex-alignment">
+
+    :host {
+      background-color: var(--paper-green-700);
+    }
+
+    iron-list {
+      margin-top: 24px;
+      padding-bottom: 16px;
+      background-color: var(--app-main-backround-color);
+    }
+
+    .name {
+      font-size: 19px;
+      padding: 8px;
+    }
+
+    .description {
+      padding-left: 8px;
+      padding-rigth: 8px;
+    }
+
+    .price {
+      font-size: 20px;
+      position: absolute;
+      bottom: 4px;
+      left: 8px;
+    }
+
+    paper-button.addButton {
+      position: absolute;
+      bottom: 16px;
+      right: 8px;
+      background-color: #F00;
+      color: #FFF;
+    }
+
+    .budgetContainer {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+    }
+
+    .votingButtonContainer {
+      position: absolute;
+      bottom: 16px;
+    }
+
+    .topContainer {
+      background-color: var(--app-main-backround-color);
+      color: #333;
+    }
+
+
+    paper-tabs {
+      margin: 8px;
+      margin-right: 16px;
+      margin-left: 16px;
+    }
+
+    paper-tab {
+      font-size: 21px !important;
+      margin-left: 24px;
+      margin-right: 24px;
+      width: 320px;
+    }
+
+    @media (max-width: 1000px) {
+      paper-tab {
+        font-size: 15px !important;
+        margin-left: 16px;
+        margin-right: 16px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      paper-tab {
+        font-size: 14px !important;
+        margin-left: 16px;
+        margin-right: 16px;
+      }
+    }
+
+  </style>
+
+  <template>
+    <iron-signals on-iron-signal-set-language="setLanguage"></iron-signals>
+
+    <iron-media-query query="(min-width: 1000px)" query-matches="{{wide}}"></iron-media-query>
+    <div class="topContainer layout vertical">
+      <div class="layout horizontal center-center tabsContainer">
+        <paper-tabs selected="{{selectedView}}">
+          <paper-tab>
+            <template is="dom-if" if="[[wide]]">
+              <div>[[area.name]] - {{localize('items_list')}}</div>
+            </template>
+            <template is="dom-if" if="[[!wide]]">
+              <div class="layout vertical center-center">
+                <div>[[area.name]]</div>
+                <div>{{localize('items_list')}}</div>
+              </div>
+            </template>
+          </paper-tab>
+          <paper-tab>{{localize('items_on_map')}}</paper-tab>
+        </paper-tabs>
+      </div>
+
+      <template is="dom-if" if="[[budgetBallotItems]]" restamp>
+        <iron-pages role="main" selected="{{selectedView}}">
+          <section>
+            <div id="itemContainer" class="layout horizontal center-center wrap">
+              <template is="dom-repeat" id="domRepeat" items="[[budgetBallotItems]]" as="item" scroll-target="document" grid>
+                <oav-area-ballot-item class="ballotAreaItem" budget-element="{{budgetElement}}" tabindex$="[[tabIndex]]" item="[[item]]"></oav-area-ballot-item>
+              </template>
+            </div>
+          </section>
+          <section>
+            <oav-items-map id="itemsMap" budget-element="[[budgetElement]]" items="[[budgetBallotItems]]"></oav-items-map>
+          </section>
+        </iron-pages>
+      </template>
+
+      <div class="layout horizontal center-center">
+
+        <!-- DISABLE IN PRODUCTION USE -->
+        <oav-ajax id="fakeLoginAjax" url="/votes/force_session_id?ssn=1907724039"></oav-ajax>
+        <!-- FAKE LOGIN ENDS -->
+
+        <oav-ajax id="getBallotAjax" url="/votes/get_ballot" on-response="_ballotResponse"></oav-ajax>
+        <oav-ajax id="postBallotAjax" method="post" url="/votes/post_vote" on-response="_ballotPostResponse"></oav-ajax>
+        <oav-ajax id="pollForLoginAjax" url="/votes/is_logged_in" on-response="_isLoggedInResponse"></oav-ajax>
+      </div>
+    </div>
+  </template>
+
+</dom-module>
+
+<script>
+  (function() {
+    Polymer({
+
+      is: 'oav-area-ballot',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.ballotEncryptionBehavior,
+        Polymer.AppLocalizeBehavior
+      ],
+
+      listeners: {
+        'oav-toggle-item-in-budget': '_toggleItemInBudget',
+        'oav-submit-vote': '_postVoteToServer',
+        'oav-item-selected-in-budget': '_itemSelectedInBudget',
+        'oav-item-de-selected-from-budget': '_itemDeSelectedFromBudget'
+      },
+
+      properties: {
+
+        area: {
+          type: Object
+        },
+
+        areaId: {
+          type: String,
+          observer: '_areaIdChanged'
+        },
+
+        areaIdRoutePath: {
+          type: Object,
+          observer: '_areaIdRoutePathChanged'
+        },
+
+        selectedView: {
+          type: Number,
+          value: 0,
+          observer: '_selectedViewChanged'
+        },
+
+        budgetElement: {
+          type: Object
+        },
+
+        budgetBallotItems: Array,
+
+        wide: Boolean,
+
+        isPollingForLogin: {
+          type: Boolean,
+          value: false
+        },
+
+        isSendingBallot: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _selectedViewChanged: function (view) {
+        if (view && view==0) {
+          window.appGlobals.activity('click', 'ideasTab');
+        } else if (view && view==1) {
+          window.appGlobals.activity('click', 'mapTab');
+        }
+      },
+
+      refreshList: function () {
+        var list = this.$$("#domRepeat");
+        if (list) {
+          list.fire('iron-resize');
+        }
+      },
+
+      ready: function() {
+        window.appBallot = this;
+        if (LOAD_TESTING_MODE) {
+          this.$.fakeLoginAjax.generateRequest();
+        }
+      },
+
+      attached: function () {
+        this.loadLanguage(this.resolveUrl('/src/locales.json'));
+      },
+
+      reset: function () {
+        if (this.budgetElement) {
+          this.budgetElement.reset();
+        }
+        this._resetBallotItems();
+        this.set('budgetBallotItems', null);
+        this.set('area', null);
+        this.fire('oav-set-area', { areaName: null, totalBudget: null });
+        var list =  this.$$("#domRepeat");
+        if (list) {
+          list.fire('iron-resize');
+        }
+      },
+
+      _resetBallotItems: function () {
+        var listItems = this.$$("#itemContainer");
+        if (listItems) {
+          for (var i = 0; i < listItems.children.length; i++) {
+            var listItem = listItems.children[i];
+            if (listItem.id != 'domRepeat') {
+              listItem.setNotTooExpensive();
+              listItem.removeFromBudget();
+            }
+          }
+        }
+      },
+
+      _toggleItemInBudget: function (event, detail) {
+        this.budgetElement.toggleBudgetItem(detail.item);
+      },
+
+      _itemSelectedInBudget: function (event, detail) {
+        var listItems = this.$$("#itemContainer");
+        for (var i = 0; i < listItems.children.length; i++) {
+          var listItem = listItems.children[i];
+          if (listItem.id != 'domRepeat' && listItem.item.id == detail.itemId) {
+            listItem.setInBudget();
+            this.$$("#itemsMap").setItemInBudget(listItem.item);
+          }
+        }
+        this._setStateOfRemainingItems();
+      },
+
+      _itemDeSelectedFromBudget: function (event, detail) {
+        var listItems = this.$$("#itemContainer");
+        for (var i = 0; i < listItems.children.length; i++) {
+          var listItem = listItems.children[i];
+          if (listItem.id != 'domRepeat' && listItem.item.id == detail.itemId) {
+            listItem.removeFromBudget();
+            this.$$("#itemsMap").removeFromBudget(listItem.item);
+          }
+        }
+        this._setStateOfRemainingItems();
+      },
+
+      _setStateOfRemainingItems: function () {
+        var budgetLeft = this.budgetElement.totalBudget-this.budgetElement.selectedBudget;
+        var listItems = this.$$("#itemContainer");
+        for (var i = 0; i < listItems.children.length; i++) {
+          var listItem = listItems.children[i];
+          if (listItem.id != 'domRepeat' && !listItem.selectedInBudget) {
+            if (listItem.item.price<=budgetLeft) {
+              listItem.setNotTooExpensive();
+            } else {
+              listItem.setTooExpensive();
+            }
+          }
+        }
+        this.$$("#itemsMap").checkIfSelectedItemToExpensive(budgetLeft);
+      },
+
+      _postVoteToServer: function () {
+        if (LOAD_TESTING_MODE) {
+          this.completePostingOfVote();
+        } else if (this.budgetElement.selectedItems && this.budgetElement.selectedItems.length>0) {
+          var dialog = Polymer.dom(document).querySelector('oav-app').getDialog("authDialog");
+          dialog.open();
+          this._openSamlLogin();
+          this.set('isPollingForLogin', true);
+          this._pollForLoginAjax();
+        } else {
+          this.fire('oav-error', this.localize('error_no_items_selected'));
+          console.error('error_no_items_selected');
+        }
+      },
+
+      _pollForLoginAjax: function () {
+        if (this.isPollingForLogin===true) {
+          this.$.pollForLoginAjax.generateRequest();
+        }
+      },
+
+      cancelLoginPolling: function () {
+        this.set('isPollingForLogin', false);
+      },
+
+      _isLoggedInResponse: function (event, detail) {
+        if (this.isPollingForLogin===true) {
+          if (detail.response.isLoggedin===true) {
+            this.cancelLoginPolling();
+            this.completePostingOfVote();
+          } else if (detail.response.isLoggedin===false && this.isPollingForLogin===true) {
+            this.async(function () {
+              this._pollForLoginAjax();
+            }.bind(this), 1900)
+          }
+        }
+      },
+
+      completePostingOfVote: function () {
+        this.cancelLoginPolling();
+        if (this.isSendingBallot===false) {
+          var selectedItemIds = _.map(this.budgetElement.selectedItems, function (item) {
+            return item.id;
+          });
+          var encryptedVote = this.encryptVote(selectedItemIds);
+          if (encryptedVote) {
+            this.$.postBallotAjax.body = { encrypted_vote: encryptedVote, area_id: this.area.id };
+            this.$.postBallotAjax.generateRequest();
+            this.set('isSendingBallot', true);
+          }
+        }
+      },
+
+      _openSamlLogin: function () {
+        var url = window.appGlobals.configFromServer.rsk_url;
+        if (this.language=='en') {
+          url+='&siteLanguage=en';
+        }
+
+        var     width = 1200,
+                height = 650,
+                top = (window.outerHeight - height) / 2,
+                left = (window.outerWidth - width) / 2;
+
+        window.open(url, 'saml_login', 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
+      },
+
+      _ballotPostResponse: function (event, detail) {
+        this.cancelLoginPolling();
+        this.set('isSendingBallot', false);
+        var dialog = Polymer.dom(document).querySelector('oav-app').getDialog("authDialog");
+        dialog.close();
+
+        if (detail.response.vote_ok==true && detail.response.error==false) {
+          this.reset();
+          this.set('areaId', null);
+          window.location = "/#/voting-completed"
+        } else {
+          this.fire('oav-error', this.localize('error_could_not_post_vote'));
+        }
+        if (LOAD_TESTING_MODE) {
+          this.$.fakeLoginAjax.generateRequest();
+        }
+      },
+
+      _areaIdRoutePathChanged: function (newPathForId) {
+        if (newPathForId && newPathForId.prefix && newPathForId.prefix == "/area-ballot") {
+          this.set('areaId', newPathForId.path.slice(1));
+        }
+      },
+
+      _areaIdChanged: function (newAreaId, oldAreaId) {
+        if (newAreaId) {
+          this.reset();
+          this.$.getBallotAjax.params = { area_id: newAreaId };
+          this.$.getBallotAjax.generateRequest();
+        }
+      },
+
+      _randomImage: function () {
+        var myRandomImages = [
+          "https://yrpri6-production.s3.amazonaws.com/5X/aK/tG-retina.png",
+          "https://yrpri6-production.s3.amazonaws.com/Fc/gy/To-retina.png",
+          "https://yrpri6-production.s3.amazonaws.com/Tr/Sw/b9-retina.png",
+          "https://yrpri6-production.s3.amazonaws.com/GX/sE/Ei-retina.png",
+          "https://yrpri6-production.s3.amazonaws.com/Aa/aW/EQ-retina.png",
+          "https://yrpri6-production.s3.amazonaws.com/eo/4w/k7-retina.png",
+          "https://yrpri6-production.s3.amazonaws.com/J8/GN/KB-retina.png",
+          "https://yrpri6-production.s3.amazonaws.com/rH/9W/Ih-retina.png",
+          "https://yrpri6-production.s3.amazonaws.com/F5/0N/Gs-retina.png",
+          "https://yrpri6-production.s3.amazonaws.com/vv/TJ/YP-retina.png",
+          "https://yrpri6-production.s3.amazonaws.com/KW/Xp/nh-retina.png",
+          "https://yrpri6-production.s3.amazonaws.com/Y4/M6/a8-retina.png",
+          "https://yrpri6-production.s3.amazonaws.com/li/3l/Mv-retina.png"
+        ];
+
+        var randomNum = Math.floor(Math.random() * myRandomImages.length);
+        return myRandomImages[randomNum];
+      },
+
+      _setupLocationsAndTranslation: function (budgetBallotItems) {
+        var arrayLength = budgetBallotItems.length;
+        for (var i = 0; i < arrayLength; i++) {
+          if (budgetBallotItems[i].locations && budgetBallotItems[i].locations != "") {
+            var hashArray = [];
+            var locationsArray = budgetBallotItems[i].locations.replace(' ','').split(',');
+            var counter = 0;
+            while (counter<locationsArray.length) {
+              hashArray.push({ latitude: locationsArray[counter], longitude: locationsArray[counter+1]});
+              counter+=2;
+            }
+            budgetBallotItems[i].locations = hashArray;
+          } else {
+            budgetBallotItems[i].locations = [];
+          }
+          // Set the localized translation
+          budgetBallotItems[i].name =  budgetBallotItems[i]['name_'+this.language];
+          budgetBallotItems[i].description =  budgetBallotItems[i]['description_'+this.language];
+
+          if (budgetBallotItems[i].image_url && budgetBallotItems[i].image_url.indexOf('imgur') > -1) {
+            //budgetBallotItems[i].image_url = this._randomImage();
+          }
+        }
+        return _.shuffle(budgetBallotItems);
+      },
+
+      _ballotResponse: function (event, detail) {
+        this.set('area', detail.response.area);
+        this.set('budgetBallotItems', this._setupLocationsAndTranslation(detail.response.budget_ballot_items));
+        var localizeMethod = this.__computeLocalize(this.language, this.resources, this.formats);
+        this.fire('oav-set-title', localizeMethod('ballot_area_name', 'area_name', this.area.name));
+        this.fire('oav-set-area', { areaName: this.area.name, totalBudget: this.area.budget_amount });
+        this.async(function () {
+          this.$$("#domRepeat").fire('iron-resize');
+        }, 10);
+      }
+    })
+  })();
+
+</script>
+
