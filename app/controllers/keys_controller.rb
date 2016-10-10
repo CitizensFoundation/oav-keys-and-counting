@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+require 'FileUtils'
+
 class KeysController < ApplicationController
 
   after_filter :log_session_id
@@ -27,6 +29,8 @@ class KeysController < ApplicationController
     success_1 = $?.success?
     output += `openssl rsa -pubout -in private_key.pem -passin file:tempPasswordFile.txt -out public_key.pem`
     success_2 = $?.success?
+
+    FileUtils.rm("tempPasswordFile.txt")
 
     if success_1 and success_2
       counting_progress = { status: keys_created }
