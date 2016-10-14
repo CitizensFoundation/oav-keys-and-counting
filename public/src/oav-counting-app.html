@@ -152,28 +152,14 @@
         <div hidden$="[[!showExit]]" class="layout horizontal exitIconInBudget">
           <paper-icon-button icon="close" on-tap="_exit"></paper-icon-button>
         </div>
-        <div class="helpIconInBudget">
-          <paper-icon-button icon="help-outline" on-tap="_help"></paper-icon-button>
-        </div>
-        <div class="budgetContainer" hidden$="[[hideBudget]]">
-          <oav-area-budget id="budget" area-name="[[areaName]]" total-budget="[[totalBudget]]" current-ballot="[[currentBallot]]"></oav-area-budget>
-        </div>
       </app-header>
       <div>
-        <template is="dom-if" if="[[_loadTestingMode()]]">
-          <div class="layout vertical center-center">
-            <h1 style="color: #F00;">LOAD TESTING MODE</h1>
-          </div>
-        </template>
         <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
-          <oav-select-voting-area id="selectVotingArea" name="select-voting-area"></oav-select-voting-area>
-          <oav-area-ballot id="budgetBallot" budget-element="[[budgetElement]]" area-id-route-path="[[subroute]]" name="area-ballot"></oav-area-ballot>
-          <oav-voting-completed name="voting-completed"></oav-voting-completed>
-          <yp-post id="post" budget-element="[[budgetElement]]" post-id-route-path="[[subroute]]" name="post"></yp-post>
+          <oav-create-key-pair id="createKeyPair" name="create-key-pair"></oav-create-key-pair>
+          <oav-counting id="counting" name="counting"></oav-counting>
         </iron-pages>
       </div>
     </app-header-layout>
-    <oav-app-globals id="appGlobals"></oav-app-globals>
   </template>
 
   <script>
@@ -322,60 +308,11 @@
           this.set('showExit', false);
         }
 
-        // Setup top ballot if needed
-        if (page && page=='area-ballot') {
-          this.set('currentBallot', this.$$("#budgetBallot"));
-          this.set('budgetElement', this.$$("#budget"));
-          this.set('hideBudget', false);
-        } else {
-          this.set('hideBudget', true);
-        }
-
         // Set background color
         if (page=='select-voting-area' || page=='voting-completed') {
           document.body.style.backgroundColor = "#21b851";
         } else {
           document.body.style.backgroundColor = "#e0e0e0";
-        }
-
-        // Reset post if needed
-        if (oldPage=='post' && this.$.post) {
-          this.$.post.reset();
-        }
-
-        // Refresh list when returning back to a ballot
-        if (page=='area-ballot' && this.$.budgetBallot && this.$.budgetBallot.refreshList) {
-          this.$.budgetBallot.refreshList();
-        }
-
-        // Reset ballot tab view to list
-        if (oldPage=='area-ballot' && this.$.budgetBallot && page!='post') {
-          this.$.budgetBallot.selectedView = 0;
-        }
-
-        // Cancel login polling if needed
-        if (oldPage=='area-ballot' && this.$.budgetBallot) {
-          this.$.budgetBallot.cancelLoginPolling();
-        }
-
-        // Do not allow access to voting-completed from a reload
-        if (page=='voting-completed' && oldPage!='area-ballot') {
-          window.location = "/";
-        }
-
-        // Refresh counts if coming from voting-completed
-        if (oldPage=='voting-completed' && this.$.selectVotingArea) {
-          this.$.selectVotingArea.refreshAreaCounters();
-        }
-
-        // Send page info to Google Analytics
-        if (page) {
-          this.async(function () {
-            window.appGlobals.activity('open', 'page', window.location.href);
-            ga('send', 'pageview', {
-              'page': location.pathname + location.search  + location.hash
-            });
-          });
         }
       }
     });
