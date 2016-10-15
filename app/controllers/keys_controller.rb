@@ -18,27 +18,83 @@
 
 require 'FileUtils'
 
+PRIVATE_KEY_PATH = Rails.root.join("master_key_pair/private.key")
+PUBLIC_KEY_PATH = Rails.root.join("master_key_pair/public.key")
+TEMP_PASSPHRASE_FILE_PATH = Rails.root.join("master_key_pair/public.key")
+TEMP_OLD_PASSPHRASE_FILE_PATH = Rails.root.join("master_key_pair/public.key")
+
+
 class KeysController < ApplicationController
 
   after_filter :log_session_id
 
   def create_public_private_key_pair
-    File.open("tempPasswordFile.txt", 'w') { |file| file.write(params[:password]) }
+    # We write the passphrases to file so it is not displayed in the command line with ps auxf for example
+    File.open(TEMP_PASSPHRASE_FILE_PATH, 'w') { |file| file.write(params[:passphrase]) }
     output = ""
-    output += `openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:2048 -passout file:tempPasswordFile.txt`
+    output += `openssl genpkey -algorithm RSA -out #{PRIVATE_KEY_PATH} -pkeyopt rsa_keygen_bits:2048 -passout file:tempPasswordFile.txt`
     success_1 = $?.success?
-    output += `openssl rsa -pubout -in private_key.pem -passin file:tempPasswordFile.txt -out public_key.pem`
+    output += `openssl rsa -pubout -in #{PRIVATE_KEY_PATH} -passin file:#{TEMP_PASSPHRASE_FILE_PATH} -out #{PUBLIC_KEY_PATH}`
     success_2 = $?.success?
 
-    FileUtils.rm("tempPasswordFile.txt")
+    FileUtils.rm(TEMP_PASSPHRASE_FILE_PATH)
 
     if success_1 and success_2
-      counting_progress = { status: keys_created }
+      counting_progress = { status: 'keys_created'}
       BudgetBallot.update(:counting_progress, counting_progress.to_s)
     end
 
     respond_to do |format|
-      format.json { render :json => {:counting_progress => BudgetConfig.first.counting_progress, success_1: success_1, success_2: success_2 }}
+      format.json { render :json => {:counting_progress => BudgetConfig.first.counting_progress, output: output, success_1: success_1, success_2: success_2 }}
     end
   end
+
+  def change_passphrase
+    # We write the passphrases to file so it is not displayed in the command line with ps auxf for example
+    File.open(TEMP_PASSPHRASE_FILE_PATH, 'w') { |file| file.write(params[:passphrase]) }
+    output = ""
+    output += `openssl genpkey -algorithm RSA -out #{PRIVATE_KEY_PATH} -pkeyopt rsa_keygen_bits:2048 -passout file:tempPasswordFile.txt`
+    success_1 = $?.success?
+    output += `openssl rsa -pubout -in #{PRIVATE_KEY_PATH} -passin file:#{TEMP_PASSPHRASE_FILE_PATH} -out #{PUBLIC_KEY_PATH}`
+    success_2 = $?.success?
+
+    FileUtils.rm(TEMP_PASSPHRASE_FILE_PATH)
+
+    if success_1 and success_2
+      counting_progress = { status: 'keys_created'}
+      BudgetBallot.update(:counting_progress, counting_progress.to_s)
+    end
+
+    respond_to do |format|
+      format.json { render :json => {:counting_progress => BudgetConfig.first.counting_progress, output: output, success_1: success_1, success_2: success_2 }}
+    end
+  end
+
+  def boot
+    mode = "unexpected"
+    if File.file?(PUBLIC_KEY_PATH) and Vote.count>0
+      mode = "counting"
+    elsif File.file?(PUBLIC_KEY_PATH)
+      mode = "changePassphrase"
+    elsif Vote.count==0
+      mode = "createKeyPair"
+    end
+    respond_to do |format|
+      format.json { render :json => {mode: mode}}
+    end
+  end
+
+  private
+
+  def is_public_key_here
+  end
+
+  def download_public_key
+  end
+
+  def test_key_pair
+    # Show back to user both encrypted and unecrypted
+    # Dulkóðunarpartur kosningar tilbúin
+  end
+
 end
