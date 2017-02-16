@@ -71,16 +71,22 @@ class KeysController < ApplicationController
   end
 
   def boot
-    mode = "unexpected"
-    if File.file?(PUBLIC_KEY_PATH) and Vote.count>0
-      mode = "counting"
-    elsif File.file?(PUBLIC_KEY_PATH)
-      mode = "changePassphrase"
-    elsif Vote.count==0
-      mode = "createKeyPair"
+    vote_count = Vote.count
+    private_key_exists = File.exists?(BudgetConfig.private_key_path)
+    public_key_exists = BudgetConfig.first and BudgetConfig.first.public_key
+
+    if vote_count>0 and private_key_exists and public_key_exists
+      boot_state = "counting"
+    elsif private_key_exists and public_key_exists
+      boot_state = "config"
+    elsif vote_count==0
+      boot_state = "createKeyPair"
+    else
+      boot_state = "unexpected"
     end
+
     respond_to do |format|
-      format.json { render :json => {mode: mode}}
+      format.json { render :json => {:boot_state => boot_state} }
     end
   end
 

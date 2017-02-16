@@ -46,7 +46,7 @@
 <link rel="import" href="../bower_components/paper-styles/typography.html">
 <link rel="import" href="../bower_components/paper-styles/color.html">
 
-<dom-module id="oav-app">
+<dom-module id="oav-setup-and-counting-app">
 
   <template>
 
@@ -141,10 +141,10 @@
 
     <app-location route="{{route}}" use-hash-as-path></app-location>
     <app-route
-        route="{{route}}"
-        pattern="/:page"
-        data="{{routeData}}"
-        tail="{{subroute}}"></app-route>
+      route="{{route}}"
+      pattern="/:page"
+      data="{{routeData}}"
+      tail="{{subroute}}"></app-route>
 
     <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
     <app-header-layout>
@@ -155,8 +155,12 @@
       </app-header>
       <div>
         <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
+          <div name="boot" class="bootscreen layout horizontal center-center">
+            [[t('booting')]]
+          </div>
           <oav-create-key-pair id="createKeyPair" name="create-key-pair"></oav-create-key-pair>
           <oav-counting id="counting" name="counting"></oav-counting>
+          <oav-config id="config" name="config"></oav-config>
         </iron-pages>
       </div>
     </app-header-layout>
@@ -166,7 +170,7 @@
 
     Polymer({
 
-      is: 'oav-app',
+      is: 'oav-setup-and-counting-app',
 
       behaviors: [
         Polymer.appHelpers,
@@ -178,7 +182,8 @@
         page: {
           type: String,
           reflectToAttribute: true,
-          observer: '_pageChanged'
+          observer: '_pageChanged',
+          value: 'boot'
         },
 
         route: {
@@ -230,8 +235,7 @@
       ],
 
       ready: function () {
-        this.set('currentBallot', this.$$("#budgetBallot"));
-        this.set('budgetElement', this.$$("#budget"));
+
       },
 
       _loadTestingMode: function () {

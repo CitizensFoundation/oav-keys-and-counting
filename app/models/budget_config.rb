@@ -19,6 +19,10 @@ class BudgetConfig < ActiveRecord::Base
 
   validate :there_can_only_be_one
 
+  def self.private_key_path
+    return "private_key/the_private.key"
+  end
+
   def self.current
     unless Rails.env.production?
       unless BudgetConfig.first
