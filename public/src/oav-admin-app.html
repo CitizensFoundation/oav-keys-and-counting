@@ -46,6 +46,8 @@
 <link rel="import" href="../bower_components/paper-styles/typography.html">
 <link rel="import" href="../bower_components/paper-styles/color.html">
 
+<link rel="import" href="oav-create-key-pair.html">
+
 <dom-module id="oav-admin-app">
 
   <template>
@@ -148,14 +150,16 @@
         </div>
       </app-header>
       <div>
-        <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
-          <div name="boot" class="bootscreen layout horizontal center-center">
-            <h1>[[localize('booting')]]</h1>
-          </div>
-          <oav-create-key-pair id="createKeyPair" name="create-key-pair"></oav-create-key-pair>
-          <oav-counting id="counting" name="counting"></oav-counting>
-          <oav-config id="config" name="config"></oav-config>
-        </iron-pages>
+        <template is="dom-if" if="[[haveSetLanguage]]">
+          <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
+            <div name="boot" class="bootscreen layout horizontal center-center">
+              <h1>[[t('booting')]]</h1>
+            </div>
+            <oav-create-key-pair id="createKeyPair" name="create-key-pair"></oav-create-key-pair>
+            <oav-counting id="counting" name="counting"></oav-counting>
+            <oav-config id="config" name="config"></oav-config>
+          </iron-pages>
+        </template>
       </div>
     </app-header-layout>
   </template>
@@ -177,7 +181,7 @@
           type: String,
           reflectToAttribute: true,
           observer: '_pageChanged',
-          value: 'boot'
+          value: 'create-key-pair'
         },
 
         route: {
@@ -268,13 +272,9 @@
 
       _translationLoaded: function () {
         if (!this.haveSetLanguage) {
-          this.haveSetLanguage = true;
-          if (typeof(Storage) !== "undefined") {
-            var selectedLanguage = localStorage.getItem("selectedLanguage");
-            if (selectedLanguage) {
-              this.fire('iron-signal', {name: 'set-language', data: selectedLanguage});
-            }
-          }
+          this.async(function () {
+            this.haveSetLanguage = true;
+          }, 10);
         }
       },
 

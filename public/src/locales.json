@@ -51,6 +51,7 @@
     "auth_dialog": "Authenticating and sending in vote"
   },
   "is": {
+    "booting": "Booting...",
     "firstPartOfPassword": "Fyrri hluti leyniorðs",
     "secondPartOfPassword": "Fyrri hluti leyniorðs",
     "welcome_title": "Hverfið mitt – Taktu þátt!",
