@@ -40,8 +40,6 @@
 
 <link rel="import" href="oav-app-globals/oav-app-globals.html">
 <link rel="import" href="oav-dialog-container/oav-dialog-container.html">
-<link rel="import" href="oav-select-voting-area/oav-select-voting-area.html">
-<link rel="import" href="oav-area-ballot/oav-area-budget.html">
 
 <link rel="import" href="../bower_components/paper-styles/typography.html">
 <link rel="import" href="../bower_components/paper-styles/color.html">
@@ -236,11 +234,21 @@
       ],
 
       _bootResponse: function (event, detail) {
+        var response = detail.response;
+        if (response.boot_state=='unexpected') {
+          var dialog = Polymer.dom(document).querySelector('oav-admin-app').getDialog("unexpectedStateDialog");
+          dialog.showDialog(response, this._backupAndReset.bind(this));
+        }
+      },
+
+      _backupAndReset: function () {
         debugger;
       },
 
       ready: function () {
-        this.$.bootAjax.generateRequest();
+        this.async(function () {
+          this.$.bootAjax.generateRequest();
+        }, 200);
       },
 
       _loadTestingMode: function () {
@@ -257,7 +265,7 @@
       },
 
       _errorHandler: function (event, detail) {
-        var dialog = Polymer.dom(document).querySelector('oav-app').getDialog("errorDialog");
+        var dialog = Polymer.dom(document).querySelector('oav-admin-app').getDialog("errorDialog");
         dialog.showErrorDialog(detail);
       },
 
@@ -279,11 +287,9 @@
       },
 
       _translationLoaded: function () {
-        if (!this.haveSetLanguage) {
-          this.async(function () {
-            this.haveSetLanguage = true;
-          }, 10);
-        }
+        this.async(function () {
+          this.haveSetLanguage = true;
+        }, 25);
       },
 
       _routeChanged: function (route) {

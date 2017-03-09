@@ -20,9 +20,8 @@ require 'fileutils'
 
 PRIVATE_KEY_PATH = Rails.root.join("master_key_pair/private.key")
 PUBLIC_KEY_PATH = Rails.root.join("master_key_pair/public.key")
-TEMP_PASSPHRASE_FILE_PATH = Rails.root.join("master_key_pair/public.key")
-TEMP_OLD_PASSPHRASE_FILE_PATH = Rails.root.join("master_key_pair/public.key")
-
+TEMP_PASSPHRASE_FILE_PATH = Rails.root.join("/tmp/tmpPassphrase")
+TEMP_OLD_PASSPHRASE_FILE_PATH = Rails.root.join("/tmp/tmpOldPassphrase")
 
 class KeysController < ApplicationController
 
@@ -71,20 +70,23 @@ class KeysController < ApplicationController
   def boot
     vote_count = Vote.count
     private_key_exists = File.exists?(BudgetConfig.private_key_path)
-    public_key_exists = BudgetConfig.first and BudgetConfig.first.public_key
+    public_key_exists = (BudgetConfig.first and BudgetConfig.first.public_key) != nil
 
     if vote_count>0 and private_key_exists and public_key_exists
       boot_state = "counting"
     elsif private_key_exists and public_key_exists
       boot_state = "config"
-    elsif vote_count==0
+    elsif vote_count==0 and !private_key_exists and !public_key_exists
       boot_state = "createKeyPair"
     else
       boot_state = "unexpected"
     end
 
     respond_to do |format|
-      format.json { render :json => {:boot_state => boot_state} }
+      format.json { render :json => {:boot_state => boot_state,
+                                     :vote_count => vote_count,
+                                     :private_key_exists => private_key_exists,
+                                     :public_key_exists => public_key_exists} }
     end
   end
 

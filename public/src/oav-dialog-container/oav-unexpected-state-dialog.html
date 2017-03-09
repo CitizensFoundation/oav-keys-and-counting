@@ -1,0 +1,85 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+
+<dom-module id="oav-unexpected-state-dialog">
+  <style>
+
+    paper-dialog {
+      background-color: #FFF;
+    }
+  </style>
+
+  <template>
+
+    <paper-dialog id="dialog" modal>
+
+      <div class="layout vertical">
+        <h1>[[t('unexpectedBootState')]]</h1>
+        <div>
+          vote_count: [[response.vote_count]]
+        </div>
+        <div>
+          public_key_exists: [[response.public_key_exists]]
+        </div>
+        <div>
+          private_key_exists: [[response.private_key_exists]]
+        </div>
+      </div>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss autofocus>[[t('cancel')]]</paper-button>
+        <paper-button dialog-confirm on-tap="_backupAndReset">[[t('backupDestroyAndReset')]]</paper-button>
+      </div>
+
+    </paper-dialog>
+
+  </template>
+
+</dom-module>
+
+<script>
+  (function() {
+    Polymer({
+
+      is: 'oav-unexpected-state-dialog',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.AppLocalizeBehavior
+      ],
+
+      properties: {
+
+        response: {
+          type: String
+        },
+
+        open: {
+          type: Boolean,
+          value: false
+        },
+
+        callbackFunction: Function
+      },
+
+      _backupAndReset: function () {
+        this.callbackFunction();
+      },
+
+      attached: function() {
+        this.loadLanguage(this.resolveUrl('../locales.json'));
+      },
+
+      showDialog: function(response, callbackFunction) {
+        this.set('response', response);
+        this.callbackFunction = callbackFunction;
+        this.set('open', true);
+        this.$$("#dialog").open();
+      }
+    })
+  })();
+
+</script>
+

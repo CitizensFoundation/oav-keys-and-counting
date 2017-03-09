@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../oav-ajax/oav-ajax-error-dialog.html">
-<link rel="import" href="../oav-page/oav-page-dialog.html">
+<link rel="import" href="oav-unexpected-state-dialog.html">
 
 <dom-module id="oav-dialog-container">
   <template>
@@ -27,18 +27,10 @@
       }
     </style>
 
+
     <div id="dialogs">
-      <paper-dialog id="authDialog" modal>
-        <div class="layout vertical center-center authDialog">
-          <p>[[localize('auth_dialog')]]</p>
-          <paper-spinner active></paper-spinner>
-        </div>
-        <div class="buttons">
-          <paper-button dialog-confirm autofocus on-tap="closeAuthDialog">Hætta við</paper-button>
-        </div>
-      </paper-dialog>
       <oav-ajax-error-dialog id="errorDialog"></oav-ajax-error-dialog>
-      <oav-page-dialog id="page"></oav-page-dialog>
+      <oav-unexpected-state-dialog id="unexpectedStateDialog"></oav-unexpected-state-dialog>
     </div>
   </template>
 
@@ -57,13 +49,8 @@
 
       getDialog: function (idName) {
         return this.$$("#"+idName);
-      },
-
-      closeAuthDialog: function () {
-        this.$.authDialog.close();
-        var budgetBallot = Polymer.dom(document).querySelector('oav-admin-app').$$("#budgetBallot");
-        budgetBallot.cancelLoginPolling();
       }
+
     });
   </script>
 </dom-module>
