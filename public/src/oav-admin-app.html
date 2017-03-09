@@ -46,7 +46,7 @@
 <link rel="import" href="../bower_components/paper-styles/typography.html">
 <link rel="import" href="../bower_components/paper-styles/color.html">
 
-<dom-module id="oav-setup-and-counting-app">
+<dom-module id="oav-admin-app">
 
   <template>
 
@@ -139,24 +139,18 @@
 
     <oav-dialog-container id="dialogContainer"></oav-dialog-container>
 
-    <app-location route="{{route}}" use-hash-as-path></app-location>
-    <app-route
-      route="{{route}}"
-      pattern="/:page"
-      data="{{routeData}}"
-      tail="{{subroute}}"></app-route>
-
     <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
+
     <app-header-layout>
       <app-header fixed effects="waterfall">
-        <div hidden$="[[!showExit]]" class="layout horizontal exitIconInBudget">
-          <paper-icon-button icon="close" on-tap="_exit"></paper-icon-button>
+        <div class="layout horizontal center-center">
+          <h1>[[page]]</h1>
         </div>
       </app-header>
       <div>
         <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
           <div name="boot" class="bootscreen layout horizontal center-center">
-            [[t('booting')]]
+            <h1>[[localize('booting')]]</h1>
           </div>
           <oav-create-key-pair id="createKeyPair" name="create-key-pair"></oav-create-key-pair>
           <oav-counting id="counting" name="counting"></oav-counting>
@@ -170,7 +164,7 @@
 
     Polymer({
 
-      is: 'oav-setup-and-counting-app',
+      is: 'oav-admin-app',
 
       behaviors: [
         Polymer.appHelpers,
@@ -235,7 +229,6 @@
       ],
 
       ready: function () {
-
       },
 
       _loadTestingMode: function () {
@@ -270,7 +263,7 @@
       },
 
       attached: function() {
-        this.loadLanguage(this.resolveUrl('/src/locales.json'));
+        this.loadLanguage(this.resolveUrl('locales.json'));
       },
 
       _translationLoaded: function () {
@@ -300,24 +293,6 @@
       },
 
       _pageChanged: function(page, oldPage) {
-        // Page import on demand.
-        if (page && page!='select-voting-area') {
-          if (page=='post') {
-            this.importHref(this.resolveUrl('yp-' + page + '/yp-' + page + '.html'), null, null, true);
-          } else {
-            this.importHref(this.resolveUrl('oav-' + page + '/oav-' + page + '.html'), null, null, true);
-          }
-          this.set('showExit', true);
-        } else {
-          this.set('showExit', false);
-        }
-
-        // Set background color
-        if (page=='select-voting-area' || page=='voting-completed') {
-          document.body.style.backgroundColor = "#21b851";
-        } else {
-          document.body.style.backgroundColor = "#e0e0e0";
-        }
       }
     });
   </script>

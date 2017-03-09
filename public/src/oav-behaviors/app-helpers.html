@@ -20,7 +20,7 @@
 
     properties: {
       language: {
-        value: 'is'
+        value: 'en'
       },
 
       isLanguage: {
@@ -54,7 +54,7 @@
       if (this.localize) {
         return this.localize(word);
       } else {
-        return "Missing localize"
+        return "Missing localize for: "+word;
       }
     },
 
