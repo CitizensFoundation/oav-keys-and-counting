@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-require 'FileUtils'
+require 'fileutils'
 
 PRIVATE_KEY_PATH = Rails.root.join("master_key_pair/private.key")
 PUBLIC_KEY_PATH = Rails.root.join("master_key_pair/public.key")
@@ -25,8 +25,6 @@ TEMP_OLD_PASSPHRASE_FILE_PATH = Rails.root.join("master_key_pair/public.key")
 
 
 class KeysController < ApplicationController
-
-  after_filter :log_session_id
 
   def create_public_private_key_pair
     # We write the passphrases to file so it is not displayed in the command line with ps auxf for example

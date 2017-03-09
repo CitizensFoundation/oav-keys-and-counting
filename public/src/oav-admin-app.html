@@ -160,6 +160,9 @@
             <oav-config id="config" name="config"></oav-config>
           </iron-pages>
         </template>
+        <div class="layout horizontal center-center">
+          <oav-ajax id="bootAjax" url="/keys/boot" on-response="_bootResponse"></oav-ajax>
+        </div>
       </div>
     </app-header-layout>
   </template>
@@ -181,7 +184,7 @@
           type: String,
           reflectToAttribute: true,
           observer: '_pageChanged',
-          value: 'create-key-pair'
+          value: 'boot'
         },
 
         route: {
@@ -232,7 +235,12 @@
         '_routePageChanged(routeData.page)'
       ],
 
+      _bootResponse: function (event, detail) {
+        debugger;
+      },
+
       ready: function () {
+        this.$.bootAjax.generateRequest();
       },
 
       _loadTestingMode: function () {
