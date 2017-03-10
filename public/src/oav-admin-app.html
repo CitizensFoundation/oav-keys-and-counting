@@ -148,19 +148,17 @@
         </div>
       </app-header>
       <div>
-        <template is="dom-if" if="[[haveSetLanguage]]">
-          <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
-            <div name="boot" class="bootscreen layout horizontal center-center">
-              <h1>[[t('booting')]]</h1>
-            </div>
-            <oav-create-key-pair id="createKeyPair" name="create-key-pair"></oav-create-key-pair>
-            <oav-counting id="counting" name="counting"></oav-counting>
-            <oav-config id="config" name="config"></oav-config>
-          </iron-pages>
-        </template>
+        <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
+          <div name="boot" class="bootscreen layout horizontal center-center">
+            <h1>[[localize('booting')]]</h1>
+          </div>
+          <oav-create-key-pair id="createKeyPair" name="createKeyPair"></oav-create-key-pair>
+          <oav-counting id="counting" name="counting"></oav-counting>
+          <oav-config id="config" name="config"></oav-config>
+        </iron-pages>
         <div class="layout horizontal center-center">
           <oav-ajax id="bootAjax" url="/keys/boot" on-response="_bootResponse"></oav-ajax>
-          <oav-ajax id="backupAndResetAjax" url="/keys/backup_and_reset" on-response="_backupAndResetResponse"></oav-ajax>
+          <oav-ajax id="backupAndResetAjax" method="delete" url="/keys/backup_and_reset" on-response="_backupAndResetResponse"></oav-ajax>
         </div>
       </div>
     </app-header-layout>
@@ -235,11 +233,10 @@
       ],
 
       _backupAndResetResponse: function (event, detail) {
-        var response = detail.response;
-        if (response.ok) {
+        if (detail.response.ok) {
           this._boot();
         } else {
-         this.$. backupAndResetAjax.showErrorDialog(this.localize('fatalBackupAndResetError'));
+         this.$.backupAndResetAjax.showErrorDialog(this.localize('fatalBackupAndResetError'));
         }
       },
 
@@ -248,6 +245,8 @@
         if (response.boot_state=='unexpected') {
           var dialog = Polymer.dom(document).querySelector('oav-admin-app').getDialog("unexpectedStateDialog");
           dialog.showDialog(response, this._backupAndReset.bind(this));
+        } else if (response.boot_state=="createKeyPair") {
+          this.set('page','createKeyPair');
         }
       },
 
@@ -257,7 +256,7 @@
       },
 
       _reallyBackupAndReset: function () {
-        debugger;
+        this.$.backupAndResetAjax.generateRequest();
       },
 
       ready: function () {

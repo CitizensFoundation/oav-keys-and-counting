@@ -17,10 +17,23 @@
 <dom-module id="oav-create-key-pair">
   <template>
     <style include="iron-flex iron-flex-alignment">
+      .createKeyPair {
+        background-color: #FFF;
+      }
 
+      .passphrases {
+        margin: 16px;
+        padding: 16px;
+      }
+
+      .passphraseMaterial {
+        padding: 16px;
+        width: 250px;
+        margin: 16px;
+      }
     </style>
 
-    <div class="layout vertical vertical">
+    <div class="layout vertical center-center createKeyPair">
 
       <template is="dom-if" if="[[changePassphraseMode]]" restamp>
         <div class="header">
@@ -29,12 +42,12 @@
         <div class="subHeader">
           {{localize('oldPassphrase')}}
         </div>
-        <div class="layout horizontal">
-          <paper-material class="layout vertical">
+        <div class="layout horizontal passphrases">
+          <paper-material class="layout vertical passphraseMaterial">
             <div>{{localize('firstPartOfOldPassphrase')}}</div>
             <oav-key-passphrase-input lower-case-password="{{firstPartOfOldPassphrase}}"></oav-key-passphrase-input>
           </paper-material>
-          <paper-material class="layout vertical">
+          <paper-material class="layout vertical passphraseMaterial">
             <div>{{localize('secondPartOfOldPassphrase')}}</div>
             <oav-key-passphrase-input lower-case-password="{{secondPartOfOldPassphrase}}"></oav-key-passphrase-input>
           </paper-material>
@@ -43,11 +56,11 @@
           {{localize('newPassphrase')}}
         </div>
         <div class="layout horizontal">
-          <paper-material class="layout vertical">
+          <paper-material class="layout vertical passphraseMaterial">
             <div>{{localize('firstPartOfPassphrase')}}</div>
             <oav-key-passphrase-input lower-case-password="{{firstPartOfPassphrase}}"></oav-key-passphrase-input>
           </paper-material>
-          <paper-material class="layout vertical">
+          <paper-material class="layout vertical passphraseMaterial">
             <div>{{localize('secondPartOfPassphrase')}}</div>
             <oav-key-passphrase-input lower-case-password="{{secondPartOfPassphrase}}"></oav-key-passphrase-input>
           </paper-material>
@@ -64,11 +77,11 @@
 
       <template is="dom-if" if="[[createKeyPairMode]]" restamp>
         <div class="layout horizontal">
-          <paper-material class="layout vertical">
+          <paper-material class="layout vertical passphraseMaterial">
             <div>{{localize('firstPartOfPassphrase')}}</div>
             <oav-key-passphrase-input lower-case-password="{{firstPartOfPassphrase}}"></oav-key-passphrase-input>
           </paper-material>
-          <paper-material class="layout vertical">
+          <paper-material class="layout vertical passphraseMaterial">
             <div>{{localize('secondPartOfPassphrase')}}</div>
             <oav-key-passphrase-input lower-case-password="{{secondPartOfPassphrase}}"></oav-key-passphrase-input>
           </paper-material>
@@ -157,6 +170,9 @@
         }
       },
 
+      ready: function () {
+      },
+
       _allPassphrasesValidated: function (newPassphrase, old) {
         return newPassphrase && old;
       },
@@ -175,6 +191,10 @@
 
       _passphraseValidated: function () {
         return (this._validatePassphrase(this.firstPartOfPassphrase) && this._validatePassphrase(this.secondPartOfPassphrase));
+      },
+
+      attached: function() {
+        this.loadLanguage(this.resolveUrl('locales.json'));
       },
 
       _createKeyPar: function () {

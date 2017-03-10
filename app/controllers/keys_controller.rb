@@ -95,20 +95,29 @@ class KeysController < ApplicationController
     private_key_exists = File.exists?(PRIVATE_KEY_PATH)
     public_key_exists = File.exists?(PRIVATE_KEY_PATH)
 
+    puts "Before dump backup"
     if vote_count>0 or public_key_exists
-      exec "rake db:dump_backup"
+      system "rake db:dump_backup"
     end
 
     if private_key_exists
+      puts "Backup private and public keys"
       backupPath = "#{Rails.root}/Backups/master_key_pairs/#{Time.now.to_f}"
       FileUtils.mkdir_p(backupPath)
       FileUtils.copy(PRIVATE_KEY_PATH, backupPath+"/private.key")
       FileUtils.copy(PUBLIC_KEY_PATH, backupPath+"/public.key")
     end
 
-    exec "rake db:drop"
-    exec "rake db:create"
+    puts "Before drop"
+    system "rake db:drop"
 
+    puts "Before create"
+    system "rake db:create"
+
+    puts "Before load schema"
+    system "rake db:schema:load"
+
+    puts "Before recreating master key pair path"
     FileUtils.rm_rf(MASTER_KEY_PAIR_PATH)
     FileUtils.mkdir_p(MASTER_KEY_PAIR_PATH)
 

@@ -10,5 +10,6 @@ Rails.application.routes.draw do
   put "counting/start_count"
   get "counting/counting_progress"
   get "keys/boot"
+  delete "keys/backup_and_reset"
   post "keys/create_public_private_key_pair"
 end

@@ -1,5 +1,13 @@
 {
   "en": {
+    "downloadPublicKey": "downloadPublicKey",
+    "createKeyPairHeader": "Create Key Pair",
+    "changePassphrase": "Change Passphrase",
+    "oldPassphrase": "Old Passphrase",
+    "firstPartOfOldPassphrase": "First Part Of Old Passphrase",
+    "secondPartOfOldPassphrase": "Second Part Of Old Passphrase",
+    "firstPartOfPassphrase": "First Part Of Passphrase",
+    "secondPartOfPassphrase": "Second Part Of Passphrase",
     "fatalBackupAndResetError": "FATAL error - backup and reset failed - check your settings - check your file persmissions - if all fails email robert@citizens.is for help",
     "confirm": "confirm",
     "areYouSureYouWantToBackupAndReset": "Are you sure you want to backup and reset?",
