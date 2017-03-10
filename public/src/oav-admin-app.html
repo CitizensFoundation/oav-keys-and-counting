@@ -160,6 +160,7 @@
         </template>
         <div class="layout horizontal center-center">
           <oav-ajax id="bootAjax" url="/keys/boot" on-response="_bootResponse"></oav-ajax>
+          <oav-ajax id="backupAndResetAjax" url="/keys/backup_and_reset" on-response="_backupAndResetResponse"></oav-ajax>
         </div>
       </div>
     </app-header-layout>
@@ -233,6 +234,15 @@
         '_routePageChanged(routeData.page)'
       ],
 
+      _backupAndResetResponse: function (event, detail) {
+        var response = detail.response;
+        if (response.ok) {
+          this._boot();
+        } else {
+         this.$. backupAndResetAjax.showErrorDialog(this.localize('fatalBackupAndResetError'));
+        }
+      },
+
       _bootResponse: function (event, detail) {
         var response = detail.response;
         if (response.boot_state=='unexpected') {
@@ -242,13 +252,22 @@
       },
 
       _backupAndReset: function () {
+        var dialog = Polymer.dom(document).querySelector('oav-admin-app').getDialog("confirmationDialog");
+        dialog.open(this.localize('areYouSureYouWantToBackupAndReset'), this._reallyBackupAndReset.bind(this), this._boot.bind(this));
+      },
+
+      _reallyBackupAndReset: function () {
         debugger;
       },
 
       ready: function () {
         this.async(function () {
-          this.$.bootAjax.generateRequest();
+          this._boot();
         }, 200);
+      },
+
+      _boot: function () {
+        this.$.bootAjax.generateRequest();
       },
 
       _loadTestingMode: function () {

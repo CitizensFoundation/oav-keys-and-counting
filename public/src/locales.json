@@ -1,5 +1,9 @@
 {
   "en": {
+    "fatalBackupAndResetError": "FATAL error - backup and reset failed - check your settings - check your file persmissions - if all fails email robert@citizens.is for help",
+    "confirm": "confirm",
+    "areYouSureYouWantToBackupAndReset": "Are you sure you want to backup and reset?",
+    "cancel": "Cancel",
     "unexpectedBootState": "Unexpected boot state!",
     "backupDestroyAndReset": "Backup & Reset",
     "booting":"Booting the admin app",

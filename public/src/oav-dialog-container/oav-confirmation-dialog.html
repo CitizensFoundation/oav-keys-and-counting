@@ -1,0 +1,90 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+
+<link rel="import" href="../oav-behaviors/app-helpers.html">
+
+<dom-module id="oav-confirmation-dialog">
+    <template>
+
+        <style include="iron-flex iron-flex-alignment">
+            paper-dialog {
+                background-color: #FFF;
+            }
+
+            .confirmationText {
+                font-size: 18px;
+            }
+        </style>
+
+        <paper-dialog id="confirmationDialog" modal>
+            <div class="confirmationText">[[confirmationText]]</div>
+            <div class="buttons">
+                <paper-button on-tap="_reset" dialog-dismiss>[[localize('cancel')]]</paper-button>
+                <paper-button dialog-confirm on-tap="_confirm">[[localize('confirm')]]</paper-button>
+            </div>
+        </paper-dialog>
+
+    </template>
+
+    <script>
+      Polymer({
+
+        is: 'oav-confirmation-dialog',
+
+        behaviors: [
+          Polymer.appHelpers,
+          Polymer.AppLocalizeBehavior
+        ],
+
+        properties: {
+
+          confirmationText: {
+            type: String
+          },
+
+          onConfirmedFunction: {
+            type: Function,
+            value: null
+          },
+
+          onCancelFunction: {
+            type: Function,
+            value: null
+          }
+        },
+
+        attached: function() {
+          this.loadLanguage(this.resolveUrl('../locales.json'));
+        },
+
+        _reset: function () {
+          this.set('confirmationText', null);
+          this.set('onConfirmedFunction', null);
+          if (this.onCancelFunction) {
+            this.onCancelFunction();
+            this.set('onCancelFunction', null);
+          }
+        },
+
+        open: function (confirmationText, onConfirmedFunction, onCancelFunction) {
+          this.set('confirmationText', confirmationText);
+          this.set('onConfirmedFunction', onConfirmedFunction);
+          this.set('onCancelFunction', onCancelFunction);
+          this.$$("#confirmationDialog").open();
+        },
+
+        _confirm: function () {
+          if (this.onConfirmedFunction) {
+            this.onConfirmedFunction();
+            this._reset();
+          }
+        }
+      });
+    </script>
+</dom-module>

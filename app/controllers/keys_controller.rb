@@ -17,9 +17,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 require 'fileutils'
-
-PRIVATE_KEY_PATH = Rails.root.join("master_key_pair/private.key")
-PUBLIC_KEY_PATH = Rails.root.join("master_key_pair/public.key")
+MASTER_KEY_PAIR_PATH = Rails.root.join("master_key_pair")
+PRIVATE_KEY_PATH = MASTER_KEY_PAIR_PATH+"/private.key"
+PUBLIC_KEY_PATH = MASTER_KEY_PAIR_PATH+"/public.key"
 TEMP_PASSPHRASE_FILE_PATH = Rails.root.join("/tmp/tmpPassphrase")
 TEMP_OLD_PASSPHRASE_FILE_PATH = Rails.root.join("/tmp/tmpOldPassphrase")
 
@@ -69,7 +69,7 @@ class KeysController < ApplicationController
 
   def boot
     vote_count = Vote.count
-    private_key_exists = File.exists?(BudgetConfig.private_key_path)
+    private_key_exists = File.exists?(PRIVATE_KEY_PATH)
     public_key_exists = (BudgetConfig.first and BudgetConfig.first.public_key) != nil
 
     if vote_count>0 and private_key_exists and public_key_exists
@@ -87,6 +87,33 @@ class KeysController < ApplicationController
                                      :vote_count => vote_count,
                                      :private_key_exists => private_key_exists,
                                      :public_key_exists => public_key_exists} }
+    end
+  end
+
+  def backup_and_reset
+    vote_count = Vote.count
+    private_key_exists = File.exists?(PRIVATE_KEY_PATH)
+    public_key_exists = File.exists?(PRIVATE_KEY_PATH)
+
+    if vote_count>0 or public_key_exists
+      exec "rake db:dump_backup"
+    end
+
+    if private_key_exists
+      backupPath = "#{Rails.root}/Backups/master_key_pairs/#{Time.now.to_f}"
+      FileUtils.mkdir_p(backupPath)
+      FileUtils.copy(PRIVATE_KEY_PATH, backupPath+"/private.key")
+      FileUtils.copy(PUBLIC_KEY_PATH, backupPath+"/public.key")
+    end
+
+    exec "rake db:drop"
+    exec "rake db:create"
+
+    FileUtils.rm_rf(MASTER_KEY_PAIR_PATH)
+    FileUtils.mkdir_p(MASTER_KEY_PAIR_PATH)
+
+    respond_to do |format|
+      format.json { render :json => {:ok => true} }
     end
   end
 
