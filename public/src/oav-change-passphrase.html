@@ -158,6 +158,11 @@
           type: String
         },
 
+        firstPartValidated: {
+          type: Boolean,
+          computed: '_firstPartValidated(firstPartOfPassphrase, oldPassphraseValidated)'
+        },
+
         allPassphrasesValidated: {
           type: Boolean,
           computed: '_allPassphrasesValidated(passphraseValidated, oldPassphraseValidated)'

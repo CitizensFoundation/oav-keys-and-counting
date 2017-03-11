@@ -3,7 +3,7 @@
 
 <dom-module id="oav-key-passphrase-input">
   <template>
-    <paper-input label$="[[label]]" id="password" type="password" value="{{password}}"></paper-input>
+    <paper-input id="input" auto-validate minlength$="[[minLength]]" label$="[[label]]" id="password" type="password" value="{{password}}"></paper-input>
   </template>
 
   <script>
@@ -13,18 +13,28 @@
       properties: {
         password: {
           type: String,
-          observer: '_passwordChanged'
+          observer: '_passwordChanged',
+          value: ""
         },
+
+        minLength: Number,
 
         lowerCasePassword: {
           type: String,
-          computed: '_lowerCasePassword(password)'
+          computed: '_lowerCasePassword(password)',
+          notify: true,
+          reflectToAttribute: true
         },
 
         label: String
       },
 
+      validate: function () {
+        return this.$.input.validate();
+      },
+
       _lowerCasePassword: function (password) {
+        console.log(password);
         if (password) {
           return password.toLowerCase();
         } else {

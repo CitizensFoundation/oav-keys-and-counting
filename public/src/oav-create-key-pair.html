@@ -33,11 +33,14 @@
         background-color: #fff;
       }
 
+      .passphraseMaterialConfirmed {
+        background-color: #B1FFA6;
+      }
+
       .passphrase {
         width: 250px;
         padding: 8px;
         margin: 8px;
-
       }
 
       .header {
@@ -74,29 +77,41 @@
           <iron-icon icon="face"></iron-icon>
           {{localize('firstPartOfPassphrase')}}
         </div>
-        <paper-material class="layout horizontal passphrases passphraseMaterial">
+        <paper-material id="firstPartMaterial" class="layout horizontal passphrases passphraseMaterial">
           <div class="layout vertical passphrase">
-            <oav-key-passphrase-input label$="{{localize('firstPartOfPassphrase')}}"lower-case-password="{{firstPartOfOldPassphrase}}"></oav-key-passphrase-input>
+            <oav-key-passphrase-input id="firstPartOfPassphrase"
+                                      min-length$="[[minimumPassPhraseLength]]"
+                                      label$="{{localize('firstPartOfPassphrase')}}"
+                                      lower-case-password="{{firstPartOfPassphrase}}"></oav-key-passphrase-input>
           </div>
           <div class="layout vertical passphrase">
-            <oav-key-passphrase-input label$="{{localize('confirmPassphrase')}}" lower-case-password="{{secondPartOfOldPassphrase}}"></oav-key-passphrase-input>
+            <oav-key-passphrase-input id="firstPartOfConfirmation"
+                                      min-length$="[[minimumPassPhraseLength]]"
+                                      label$="{{localize('confirmPassphrase')}}"
+                                      lower-case-password="{{firstPartOfConfirmation}}"></oav-key-passphrase-input>
           </div>
         </paper-material>
         <div class="partHeader self-start">
           <iron-icon icon="face"></iron-icon>
           {{localize('secondPartOfPassphrase')}}
         </div>
-        <paper-material class="layout horizontal passphraseMaterial">
+        <paper-material id="secondPartMaterial" class="layout horizontal passphraseMaterial">
           <div class="layout vertical passphrase">
-            <oav-key-passphrase-input label$="{{localize('secondPartOfPassphrase')}}" lower-case-password="{{firstPartOfPassphrase}}"></oav-key-passphrase-input>
+            <oav-key-passphrase-input id="secondPartOfPassphrase"
+                                      min-length$="[[minimumPassPhraseLength]]"
+                                      label$="{{localize('secondPartOfPassphrase')}}"
+                                      lower-case-password="{{secondPartOfPassphrase}}"></oav-key-passphrase-input>
           </div>
           <div class="layout vertical passphrase">
-            <oav-key-passphrase-input label$="{{localize('confirmPassphrase')}}" lower-case-password="{{secondPartOfPassphrase}}"></oav-key-passphrase-input>
+            <oav-key-passphrase-input id="secondPartOfConfirmation"
+                                      min-length$="[[minimumPassPhraseLength]]"
+                                      label$="{{localize('confirmPassphrase')}}"
+                                      lower-case-password="{{secondPartOfConfirmation}}"></oav-key-passphrase-input>
           </div>
         </paper-material>
 
         <div class="createButtonContainer">
-          <paper-button disabled$="[[!passphraseValidated]]" on-tap="_createKeyPar">{{localize('createKeyPair')}}</paper-button>
+          <paper-button disabled$="[[!allPassphrasesValidated]]" on-tap="_createKeyPar">{{localize('createKeyPair')}}</paper-button>
         </div>
 
         <div hidden$="[[publicKeyAvilable]]">
@@ -121,20 +136,6 @@
       ],
 
       properties: {
-        mode: {
-          type: String,
-          value: 'changePassphrase'
-        },
-
-        createKeyPairMode: {
-          type: Boolean,
-          computed: '_createKeyPairMode(mode)'
-        },
-
-        changePassphraseMode: {
-          type: Boolean,
-          computed: '_changePassphraseMode(mode)'
-        },
 
         minimumPassPhraseLength: {
           type: Number,
@@ -142,24 +143,38 @@
         },
 
         firstPartOfPassphrase: {
-          type: String
+          type: String,
+          value: ""
         },
 
         secondPartOfPassphrase: {
-          type: String
+          type: String,
+          value: ""
         },
 
-        firstPartOfOldPassphrase: {
-          type: String
+        firstPartOfConfirmation: {
+          type: String,
+          value: ""
         },
 
-        secondPartOfOldPassphrase: {
-          type: String
+        secondPartOfConfirmation: {
+          type: String,
+          value: ""
+        },
+
+        firstPartValidated: {
+          type: Boolean,
+          computed: '_firstPartValidated(firstPartOfPassphrase, firstPartOfConfirmation)'
+        },
+
+        secondPartValidated: {
+          type: Boolean,
+          computed: '_secondPartValidated(secondPartOfPassphrase, secondPartOfConfirmation)'
         },
 
         allPassphrasesValidated: {
           type: Boolean,
-          computed: '_allPassphrasesValidated(passphraseValidated, oldPassphraseValidated)'
+          computed: '_allPassphrasesValidated(passphraseValidated, confirmationValidated)'
         },
 
         passphraseValidated: {
@@ -167,9 +182,9 @@
           computed: '_passphraseValidated(firstPassphrase, secondPassphrase)'
         },
 
-        oldPassphraseValidated: {
+        confirmationValidated: {
           type: Boolean,
-          computed: '_passphraseValidated(firstOldPassphrase, secondOldPassphrase)'
+          computed: '_passphraseValidated(firstPartOfConfirmation, secondPartOfConfirmation)'
         },
 
         publicKeyAvilable: {
@@ -181,16 +196,36 @@
       ready: function () {
       },
 
+      _firstPartValidated: function (passphrase, confirmation) {
+        if (passphrase &&
+            confirmation &&
+            passphrase==confirmation &&
+            this.$.firstPartOfPassphrase.validate() &&
+            this.$.firstPartOfConfirmation.validate()) {
+          this.$.firstPartMaterial.toggleClass("passphraseMaterialConfirmed", true);
+        } else {
+          this.$.firstPartMaterial.toggleClass("passphraseMaterialConfirmed", false);
+        }
+      },
+
+      _secondPartValidated: function (passphrase, confirmation) {
+        if (passphrase &&
+          confirmation &&
+          passphrase==confirmation &&
+          this.$.secondPartOfPassphrase.validate() &&
+          this.$.secondPartOfConfirmation.validate()) {
+          this.$.secondPartMaterial.toggleClass("passphraseMaterialConfirmed", true);
+        } else {
+          this.$.secondPartMaterial.toggleClass("passphraseMaterialConfirmed", false);
+        }
+      },
+
       _allPassphrasesValidated: function (newPassphrase, old) {
         return newPassphrase && old;
       },
 
       createKeyPairMode: function (mode) {
         return mode=='createKeyPair';
-      },
-
-      _changePassphraseMode: function (mode) {
-        return mode=='changePassphrase';
       },
 
       _validatePassphrase: function (password) {
