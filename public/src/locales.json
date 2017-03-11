@@ -1,10 +1,11 @@
 {
   "en": {
+    "confirmPassphrase": "Confirm Passphrase",
     "newPassphrase": "New Passphrase",
     "allowedPassphraseCharacters": "Allowed Passphrase Characters",
     "allowedPassphraseCharactersExample": "a..z 0..9 . , !  #",
     "downloadPublicKey": "downloadPublicKey",
-    "createKeyPairHeader": "Create Key Pair",
+    "createKeyPair": "Create Key Pair",
     "changePassphrase": "Change Passphrase",
     "oldPassphrase": "Old Passphrase",
     "firstPartOfOldPassphrase": "First Part Of Old Passphrase",

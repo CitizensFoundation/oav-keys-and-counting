@@ -3,7 +3,7 @@
 
 <dom-module id="oav-key-passphrase-input">
   <template>
-    <paper-input id="password" type="password" value="{{password}}"></paper-input>
+    <paper-input label$="[[label]]" id="password" type="password" value="{{password}}"></paper-input>
   </template>
 
   <script>
@@ -19,7 +19,9 @@
         lowerCasePassword: {
           type: String,
           computed: '_lowerCasePassword(password)'
-        }
+        },
+
+        label: String
       },
 
       _lowerCasePassword: function (password) {
