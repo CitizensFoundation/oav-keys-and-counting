@@ -14,11 +14,11 @@
 <link rel="import" href="oav-behaviors/app-helpers.html">
 <link rel="import" href="oav-key-passphrase-input.html">
 
-<dom-module id="oav-create-key-pair">
+<dom-module id="oav-change-passphrase">
   <template>
     <style include="iron-flex iron-flex-alignment">
       .createKeyPair {
-        background-color: #f0f0f0;
+        background-color: #FFF;
       }
 
       .passphrases {
@@ -28,71 +28,78 @@
 
       .passphraseMaterial {
         padding: 16px;
-        margin: 16px;
-        background-color: #fff;
-      }
-
-      .passphrase {
         width: 250px;
-        padding: 8px;
-        margin: 8px;
-
-      }
-
-      .header {
-        font-size: 26px;
-      }
-
-      .allowedCharsInfo {
-        font-size: 24px;
-      }
-
-      .allowedCharsInfoExample {
-        font-size: 22px;
+        margin: 16px;
       }
     </style>
 
     <div class="layout vertical center-center createKeyPair">
 
+      <template is="dom-if" if="[[changePassphraseMode]]" restamp>
+        <div class="header">
+          {{localize('changePassphrase')}}
+        </div>
+
+        <div class="allowedCharsInfo">
+          {{localize('allowedPassphraseCharacters')}}
+        </div>
+
+        <div class="allowedCharsInfoExample">
+          {{localize('allowedPassphraseCharactersExample')}}
+        </div>
+
+        <div class="subHeader">
+          {{localize('oldPassphrase')}}
+        </div>
+        <div class="layout horizontal passphrases">
+          <paper-material class="layout vertical passphraseMaterial">
+            <div>{{localize('firstPartOfOldPassphrase')}}</div>
+            <oav-key-passphrase-input lower-case-password="{{firstPartOfOldPassphrase}}"></oav-key-passphrase-input>
+          </paper-material>
+          <paper-material class="layout vertical passphraseMaterial">
+            <div>{{localize('secondPartOfOldPassphrase')}}</div>
+            <oav-key-passphrase-input lower-case-password="{{secondPartOfOldPassphrase}}"></oav-key-passphrase-input>
+          </paper-material>
+        </div>
+        <div class="subHeader">
+          {{localize('newPassphrase')}}
+        </div>
+        <div class="layout horizontal">
+          <paper-material class="layout vertical passphraseMaterial">
+            <div>{{localize('firstPartOfPassphrase')}}</div>
+            <oav-key-passphrase-input lower-case-password="{{firstPartOfPassphrase}}"></oav-key-passphrase-input>
+          </paper-material>
+          <paper-material class="layout vertical passphraseMaterial">
+            <div>{{localize('secondPartOfPassphrase')}}</div>
+            <oav-key-passphrase-input lower-case-password="{{secondPartOfPassphrase}}"></oav-key-passphrase-input>
+          </paper-material>
+        </div>
+
+        <div class="createButtonContainer">
+          <paper-button disabled$="[[!allPassphrasesValidated]]" on-tap="_changePassphrase">{{localize('changePassphrase')}}</paper-button>
+        </div>
+      </template>
+
       <div class="header">
-        {{localize('changePassphrase')}}
+        {{localize('createKeyPairHeader')}}
       </div>
 
-      <div class="allowedCharsInfo">
-        {{localize('allowedPassphraseCharacters')}}
-      </div>
+      <template is="dom-if" if="[[createKeyPairMode]]" restamp>
+        <div class="layout horizontal">
+          <paper-material class="layout vertical passphraseMaterial">
+            <div>{{localize('firstPartOfPassphrase')}}</div>
+            <oav-key-passphrase-input lower-case-password="{{firstPartOfPassphrase}}"></oav-key-passphrase-input>
+          </paper-material>
+          <paper-material class="layout vertical passphraseMaterial">
+            <div>{{localize('secondPartOfPassphrase')}}</div>
+            <oav-key-passphrase-input lower-case-password="{{secondPartOfPassphrase}}"></oav-key-passphrase-input>
+          </paper-material>
+        </div>
 
-      <div class="allowedCharsInfoExample">
-        {{localize('allowedPassphraseCharactersExample')}}
-      </div>
-
-      <paper-material class="layout horizontal passphrases passphraseMaterial">
-        <div class="layout vertical passphrase">
-          <div>{{localize('firstPartOfOldPassphrase')}}</div>
-          <oav-key-passphrase-input lower-case-password="{{firstPartOfOldPassphrase}}"></oav-key-passphrase-input>
+        <div class="createButtonContainer">
+          <paper-button disabled$="[[!passphraseValidated]]" on-tap="_createKeyPar">{{localize('createKeyPair')}}</paper-button>
         </div>
-        <div class="layout vertical passphrase">
-          <div>{{localize('secondPartOfOldPassphrase')}}</div>
-          <oav-key-passphrase-input lower-case-password="{{secondPartOfOldPassphrase}}"></oav-key-passphrase-input>
-        </div>
-      </paper-material>
-      <div class="subHeader">
-        {{localize('confirmPassphrase')}}
-      </div>
-      <paper-material class="layout horizontal passphraseMaterial">
-        <div class="layout vertical passphrase">
-          <div>{{localize('firstPartOfPassphrase')}}</div>
-          <oav-key-passphrase-input lower-case-password="{{firstPartOfPassphrase}}"></oav-key-passphrase-input>
-        </div>
-        <div class="layout vertical passphrase">
-          <div>{{localize('secondPartOfPassphrase')}}</div>
-          <oav-key-passphrase-input lower-case-password="{{secondPartOfPassphrase}}"></oav-key-passphrase-input>
-        </div>
-      </paper-material>
-
-      <div class="createButtonContainer">
-        <paper-button disabled$="[[!passphraseValidated]]" on-tap="_createKeyPar">{{localize('createKeyPair')}}</paper-button>
-      </div>
+      </template>
 
       <div hidden$="[[publicKeyAvilable]]">
         <a href="/keys/download_public_key">{{localize('downloadPublicKey')}}</a>
@@ -107,7 +114,7 @@
 
   <script>
     Polymer({
-      is: 'oav-create-key-pair',
+      is: 'oav-change-passphrase',
 
       behaviors: [
         Polymer.appHelpers,

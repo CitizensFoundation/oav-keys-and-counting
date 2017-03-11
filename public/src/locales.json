@@ -1,5 +1,8 @@
 {
   "en": {
+    "newPassphrase": "New Passphrase",
+    "allowedPassphraseCharacters": "Allowed Passphrase Characters",
+    "allowedPassphraseCharactersExample": "a..z 0..9 . , !  #",
     "downloadPublicKey": "downloadPublicKey",
     "createKeyPairHeader": "Create Key Pair",
     "changePassphrase": "Change Passphrase",
