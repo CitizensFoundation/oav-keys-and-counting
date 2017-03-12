@@ -63,6 +63,7 @@ ActiveRecord::Schema.define(version: 20160725111036) do
     t.integer  "timeout_in_seconds",                  limit: 4,                     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text "counting_progress"
     t.string   "rsk_soap_username",                   limit: 255
     t.string   "rsk_soap_password",                   limit: 255
     t.string   "election_id",                         limit: 255

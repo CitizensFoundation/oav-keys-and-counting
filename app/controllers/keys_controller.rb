@@ -41,10 +41,10 @@ class KeysController < ApplicationController
 
     FileUtils.rm(TEMP_PASSPHRASE_FILE_PATH)
 
-#    if success_1 and success_2
-#      counting_progress = { status: 'keys_created'}
-#      BudgetBallot.update(:counting_progress, counting_progress.to_s)
-#    end
+    if success_1 and success_2
+      counting_progress = { status: 'keys_created'}
+      BudgetBallot.update(:counting_progress, counting_progress.to_s)
+    end
 
     respond_to do |format|
       format.json { render :json => {output: output, success_1: success_1, success_2: success_2 }}

@@ -19,7 +19,7 @@
     <style include="iron-flex iron-flex-alignment">
       .createKeyPairContainer {
         background-color: #f0f0f0;
-        width: 620px;
+        width: 600px;
       }
 
       .passphrases {
@@ -30,11 +30,12 @@
       .passphraseMaterial {
         padding: 16px;
         margin: 16px;
+        margin-top: 8px;
         background-color: #fff;
       }
 
       .passphraseMaterialConfirmed {
-        background-color: #B1FFA6;
+        background-color: #E1FFD6;
       }
 
       .passphrase {
@@ -59,6 +60,30 @@
       .partHeader {
         font-size: 22px;
         padding-top: 8px;
+        width: 100%;
+      }
+
+      paper-button {
+        margin-top: 16px;
+        background-color: #FFF;
+        padding: 16px;
+      }
+
+      .faceIcon {
+        width: 45px;
+        height: 45px;
+      }
+
+      .checkIcon {
+        color: #0A0;
+        width: 45px;
+        height: 45px;
+      }
+
+      .titleText {
+        padding-left: 16px;
+        padding-top: 4px;
+        font-size: 24px;
       }
     </style>
 
@@ -73,9 +98,11 @@
           {{localize('allowedPassphraseCharactersExample')}}
         </div>
 
-        <div class="partHeader self-start">
-          <iron-icon icon="face"></iron-icon>
-          {{localize('firstPartOfPassphrase')}}
+        <div class="partHeader self-start layout horizontal">
+          <iron-icon icon="face" class="faceIcon"></iron-icon>
+          <div class="titleText">{{localize('firstPartOfPassphrase')}}</div>
+          <div class="flex"></div>
+          <iron-icon icon="check" class="checkIcon" hidden$="[[!firstPartValidated]]"></iron-icon>
         </div>
         <paper-material id="firstPartMaterial" class="layout horizontal passphrases passphraseMaterial">
           <div class="layout vertical passphrase">
@@ -93,9 +120,11 @@
                                       lower-case-password="{{firstPartOfConfirmation}}"></oav-key-passphrase-input>
           </div>
         </paper-material>
-        <div class="partHeader self-start">
-          <iron-icon icon="face"></iron-icon>
-          {{localize('secondPartOfPassphrase')}}
+        <div class="partHeader self-start layout horizontal">
+          <iron-icon icon="face" class="faceIcon"></iron-icon>
+          <div class="titleText">{{localize('secondPartOfPassphrase')}}</div>
+          <div class="flex"></div>
+          <iron-icon icon="check" class="checkIcon" hidden$="[[!secondPartValidated]]"></iron-icon>
         </div>
         <paper-material id="secondPartMaterial" class="layout horizontal passphraseMaterial">
           <div class="layout vertical passphrase">
@@ -115,7 +144,7 @@
         </paper-material>
 
         <div class="createButtonContainer" hidden$="[[!allPassphrasesValidated]]">
-          <paper-button on-tap="_createKeyPar">{{localize('createKeyPair')}}</paper-button>
+          <paper-button raised on-tap="_createKeyPar">{{localize('createKeyPair')}}</paper-button>
         </div>
 
         <div class="layout horizontal center-center">
