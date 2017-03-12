@@ -59,7 +59,7 @@ ActiveRecord::Schema.define(version: 20160725111036) do
   end
 
   create_table "config", force: :cascade do |t|
-    t.string   "rsk_url",                             limit: 255,                   null: false
+    t.string   "rsk_url",                             limit: 255
     t.integer  "timeout_in_seconds",                  limit: 4,                     null: false
     t.datetime "created_at"
     t.datetime "updated_at"

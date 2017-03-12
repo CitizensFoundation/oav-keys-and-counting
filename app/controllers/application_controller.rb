@@ -18,12 +18,6 @@
 
 class ApplicationController < ActionController::Base
 
-  before_filter :get_db_config
-
-  def load_public_key
-    @public_key = @config.public_key
-  end
-
   def set_locale
     if params[:locale]
       I18n.locale = params[:locale]
@@ -35,7 +29,4 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def get_db_config
-    @config = BudgetConfig.current
-  end
 end

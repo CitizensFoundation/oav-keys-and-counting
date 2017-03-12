@@ -19,10 +19,6 @@ class BudgetConfig < ActiveRecord::Base
 
   validate :there_can_only_be_one
 
-  def self.private_key_path
-    return "private_key/the_private.key"
-  end
-
   def self.current
     unless Rails.env.production?
       unless BudgetConfig.first
@@ -38,7 +34,7 @@ class BudgetConfig < ActiveRecord::Base
   private
 
   def there_can_only_be_one
-    errors.add_to_base('There can only be one') if BudgetConfig.count > 0
+    errors.add_to_base('There can only be one') if BudgetConfig.count > 1
   end
 
 end

@@ -33,17 +33,24 @@ class KeysController < ApplicationController
     puts MASTER_KEY_PAIR_PATH
     puts PRIVATE_KEY_PATH
     puts PUBLIC_KEY_PATH
+    FileUtils.mkdir_p(MASTER_KEY_PAIR_PATH)
     output = ""
-    output += `openssl genrsa -aes128 -out #{PRIVATE_KEY_PATH} -passout file:#{TEMP_PASSPHRASE_FILE_PATH} 2048`
+    puts output += `openssl genrsa -aes128 -out #{PRIVATE_KEY_PATH} -passout file:#{TEMP_PASSPHRASE_FILE_PATH} 2048`
     success_1 = $?.success?
-    output += `openssl rsa -pubout -in #{PRIVATE_KEY_PATH} -passin file:#{TEMP_PASSPHRASE_FILE_PATH} -out #{PUBLIC_KEY_PATH}`
+    puts output += `openssl rsa -pubout -in #{PRIVATE_KEY_PATH} -passin file:#{TEMP_PASSPHRASE_FILE_PATH} -out #{PUBLIC_KEY_PATH}`
     success_2 = $?.success?
 
     FileUtils.rm(TEMP_PASSPHRASE_FILE_PATH)
 
     if success_1 and success_2
-      counting_progress = { status: 'keys_created'}
-      BudgetBallot.update(:counting_progress, counting_progress.to_s)
+      unless BudgetConfig.first
+        config=BudgetConfig.new
+        config.timeout_in_seconds = 600
+        config.save
+      end
+      config=BudgetConfig.first
+      config.public_key = File.read(PUBLIC_KEY_PATH)
+      config.save
     end
 
     respond_to do |format|
@@ -73,30 +80,45 @@ class KeysController < ApplicationController
   end
 
   def boot
-    vote_count = Vote.count
-    private_key_exists = File.exists?(PRIVATE_KEY_PATH)
-    public_key_exists = (BudgetConfig.first and BudgetConfig.first.public_key) != nil
+    puts "BOOTING"
 
-    if vote_count>0 and private_key_exists and public_key_exists
-      boot_state = "counting"
-    elsif private_key_exists and public_key_exists
-      boot_state = "config"
-    elsif vote_count==0 and !private_key_exists and !public_key_exists
-      boot_state = "createKeyPair"
-    else
-      boot_state = "unexpected"
+    boot_state = "unexpected"
+    exception = nil
+
+    begin
+      vote_count = Vote.count
+      private_key_exists = File.exists?(PRIVATE_KEY_PATH)
+      public_key_exists = (BudgetConfig.first and BudgetConfig.first.public_key) != nil
+      public_key_file_exists = File.exists?(PUBLIC_KEY_PATH)
+
+      if vote_count>0 and private_key_exists and public_key_exists
+        boot_state = "counting"
+      elsif private_key_exists and public_key_exists
+        boot_state = "config"
+      elsif vote_count==0 and !private_key_exists and !public_key_exists
+        boot_state = "createKeyPair"
+      end
+    rescue Exception => e
+      exception = "#{e}"
     end
 
     respond_to do |format|
       format.json { render :json => {:boot_state => boot_state,
                                      :vote_count => vote_count,
                                      :private_key_exists => private_key_exists,
-                                     :public_key_exists => public_key_exists} }
+                                     :public_key_exists => public_key_exists,
+                                     :public_key_file_exists => public_key_file_exists,
+                                     :exception => exception }
+      }
     end
   end
 
   def backup_and_reset
-    vote_count = Vote.count
+    begin
+      vote_count = Vote.count
+    rescue
+      vote_count = -1
+    end
     private_key_exists = File.exists?(PRIVATE_KEY_PATH)
     public_key_exists = File.exists?(PUBLIC_KEY_PATH)
 
