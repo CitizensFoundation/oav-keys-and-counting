@@ -17,9 +17,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 require 'fileutils'
+
 MASTER_KEY_PAIR_PATH = Rails.root.join("master_key_pair")
-PRIVATE_KEY_PATH = MASTER_KEY_PAIR_PATH+"/private.key"
-PUBLIC_KEY_PATH = MASTER_KEY_PAIR_PATH+"/public.key"
+PRIVATE_KEY_PATH =  Rails.root.join("master_key_pair","private.key")
+PUBLIC_KEY_PATH = Rails.root.join("master_key_pair","public.key")
 TEMP_PASSPHRASE_FILE_PATH = Rails.root.join("/tmp/tmpPassphrase")
 TEMP_OLD_PASSPHRASE_FILE_PATH = Rails.root.join("/tmp/tmpOldPassphrase")
 
@@ -28,21 +29,25 @@ class KeysController < ApplicationController
   def create_public_private_key_pair
     # We write the passphrases to file so it is not displayed in the command line with ps auxf for example
     File.open(TEMP_PASSPHRASE_FILE_PATH, 'w') { |file| file.write(params[:passphrase]) }
+    puts params[:passphrase]
+    puts MASTER_KEY_PAIR_PATH
+    puts PRIVATE_KEY_PATH
+    puts PUBLIC_KEY_PATH
     output = ""
-    output += `openssl genpkey -algorithm RSA -out #{PRIVATE_KEY_PATH} -pkeyopt rsa_keygen_bits:2048 -passout file:tempPasswordFile.txt`
+    output += `openssl genrsa -aes128 -out #{PRIVATE_KEY_PATH} -passout file:#{TEMP_PASSPHRASE_FILE_PATH} 2048`
     success_1 = $?.success?
     output += `openssl rsa -pubout -in #{PRIVATE_KEY_PATH} -passin file:#{TEMP_PASSPHRASE_FILE_PATH} -out #{PUBLIC_KEY_PATH}`
     success_2 = $?.success?
 
     FileUtils.rm(TEMP_PASSPHRASE_FILE_PATH)
 
-    if success_1 and success_2
-      counting_progress = { status: 'keys_created'}
-      BudgetBallot.update(:counting_progress, counting_progress.to_s)
-    end
+#    if success_1 and success_2
+#      counting_progress = { status: 'keys_created'}
+#      BudgetBallot.update(:counting_progress, counting_progress.to_s)
+#    end
 
     respond_to do |format|
-      format.json { render :json => {:counting_progress => BudgetConfig.first.counting_progress, output: output, success_1: success_1, success_2: success_2 }}
+      format.json { render :json => {output: output, success_1: success_1, success_2: success_2 }}
     end
   end
 
@@ -93,21 +98,24 @@ class KeysController < ApplicationController
   def backup_and_reset
     vote_count = Vote.count
     private_key_exists = File.exists?(PRIVATE_KEY_PATH)
-    public_key_exists = File.exists?(PRIVATE_KEY_PATH)
+    public_key_exists = File.exists?(PUBLIC_KEY_PATH)
 
     puts "Before dump backup"
     if vote_count>0 or public_key_exists
       system "rake db:dump_backup"
     end
 
+    puts "Backup private and public keys"
+    backupPath = "#{Rails.root}/Backups/master_key_pairs/#{Time.now.to_f}"
+    FileUtils.mkdir_p(backupPath)
+
     if private_key_exists
-      puts "Backup private and public keys"
-      backupPath = "#{Rails.root}/Backups/master_key_pairs/#{Time.now.to_f}"
-      FileUtils.mkdir_p(backupPath)
       FileUtils.copy(PRIVATE_KEY_PATH, backupPath+"/private.key")
-      FileUtils.copy(PUBLIC_KEY_PATH, backupPath+"/public.key")
     end
 
+    if public_key_exists
+      FileUtils.copy(PUBLIC_KEY_PATH, backupPath+"/public.key")
+    end
     puts "Before drop"
     system "rake db:drop"
 

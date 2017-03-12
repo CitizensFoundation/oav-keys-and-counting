@@ -80,14 +80,16 @@
         <paper-material id="firstPartMaterial" class="layout horizontal passphrases passphraseMaterial">
           <div class="layout vertical passphrase">
             <oav-key-passphrase-input id="firstPartOfPassphrase"
-                                      min-length$="[[minimumPassPhraseLength]]"
+                                      min-length$="[[minimumPassphraseLength]]"
                                       label$="{{localize('firstPartOfPassphrase')}}"
+                                      password="[[firstPartOfPassphrase]]"
                                       lower-case-password="{{firstPartOfPassphrase}}"></oav-key-passphrase-input>
           </div>
           <div class="layout vertical passphrase">
             <oav-key-passphrase-input id="firstPartOfConfirmation"
-                                      min-length$="[[minimumPassPhraseLength]]"
+                                      min-length$="[[minimumPassphraseLength]]"
                                       label$="{{localize('confirmPassphrase')}}"
+                                      password="[[firstPartOfConfirmation]]"
                                       lower-case-password="{{firstPartOfConfirmation}}"></oav-key-passphrase-input>
           </div>
         </paper-material>
@@ -98,29 +100,26 @@
         <paper-material id="secondPartMaterial" class="layout horizontal passphraseMaterial">
           <div class="layout vertical passphrase">
             <oav-key-passphrase-input id="secondPartOfPassphrase"
-                                      min-length$="[[minimumPassPhraseLength]]"
+                                      min-length$="[[minimumPassphraseLength]]"
                                       label$="{{localize('secondPartOfPassphrase')}}"
+                                      password="[[secondPartOfPassphrase]]"
                                       lower-case-password="{{secondPartOfPassphrase}}"></oav-key-passphrase-input>
           </div>
           <div class="layout vertical passphrase">
             <oav-key-passphrase-input id="secondPartOfConfirmation"
-                                      min-length$="[[minimumPassPhraseLength]]"
+                                      min-length$="[[minimumPassphraseLength]]"
                                       label$="{{localize('confirmPassphrase')}}"
+                                      password="[[secondPartOfConfirmation]]"
                                       lower-case-password="{{secondPartOfConfirmation}}"></oav-key-passphrase-input>
           </div>
         </paper-material>
 
-        <div class="createButtonContainer">
-          <paper-button disabled$="[[!allPassphrasesValidated]]" on-tap="_createKeyPar">{{localize('createKeyPair')}}</paper-button>
-        </div>
-
-        <div hidden$="[[publicKeyAvilable]]">
-          <a href="/keys/download_public_key">{{localize('downloadPublicKey')}}</a>
+        <div class="createButtonContainer" hidden$="[[!allPassphrasesValidated]]">
+          <paper-button on-tap="_createKeyPar">{{localize('createKeyPair')}}</paper-button>
         </div>
 
         <div class="layout horizontal center-center">
-          <oav-ajax id="createCertPairAjax" url="/keys/create_public_private_key_pair" on-response="_createdKeyPairResponse"></oav-ajax>
-          <oav-ajax id="changePassphraseAjax" url="/keys/change_passphrase" on-response="_changePassphraseResponse"></oav-ajax>
+          <oav-ajax id="createCertPairAjax" method="post" url="/keys/create_public_private_key_pair" on-response="_createdKeyPairResponse"></oav-ajax>
         </div>
       </div>
     </div>
@@ -137,61 +136,58 @@
 
       properties: {
 
-        minimumPassPhraseLength: {
+        minimumPassphraseLength: {
           type: Number,
           value: 8
         },
 
         firstPartOfPassphrase: {
           type: String,
-          value: ""
+          value: "12345678"
         },
 
         secondPartOfPassphrase: {
           type: String,
-          value: ""
+          value: "12345678"
         },
 
         firstPartOfConfirmation: {
           type: String,
-          value: ""
+          value: "12345678"
         },
 
         secondPartOfConfirmation: {
           type: String,
-          value: ""
+          value: "12345678"
         },
 
-        firstPartValidated: {
+        firstPartValidatedComputed: {
           type: Boolean,
           computed: '_firstPartValidated(firstPartOfPassphrase, firstPartOfConfirmation)'
         },
 
-        secondPartValidated: {
+        secondPartValidatedComputed: {
           type: Boolean,
           computed: '_secondPartValidated(secondPartOfPassphrase, secondPartOfConfirmation)'
         },
 
-        allPassphrasesValidated: {
-          type: Boolean,
-          computed: '_allPassphrasesValidated(passphraseValidated, confirmationValidated)'
-        },
-
-        passphraseValidated: {
-          type: Boolean,
-          computed: '_passphraseValidated(firstPassphrase, secondPassphrase)'
-        },
-
-        confirmationValidated: {
-          type: Boolean,
-          computed: '_passphraseValidated(firstPartOfConfirmation, secondPartOfConfirmation)'
-        },
-
-        publicKeyAvilable: {
+        firstPartValidated: {
           type: Boolean,
           value: false
+        },
+
+        secondPartValidated: {
+          type: Boolean,
+          value: false
+        },
+
+        allPassphrasesValidated: {
+          type: Boolean,
+          value: false,
+          computed: '_allPassphrasesValidated(firstPartValidated, secondPartValidated)'
         }
       },
+
 
       ready: function () {
       },
@@ -203,8 +199,10 @@
             this.$.firstPartOfPassphrase.validate() &&
             this.$.firstPartOfConfirmation.validate()) {
           this.$.firstPartMaterial.toggleClass("passphraseMaterialConfirmed", true);
+          this.set('firstPartValidated', true);
         } else {
           this.$.firstPartMaterial.toggleClass("passphraseMaterialConfirmed", false);
+          this.set('firstPartValidated', false);
         }
       },
 
@@ -215,21 +213,34 @@
           this.$.secondPartOfPassphrase.validate() &&
           this.$.secondPartOfConfirmation.validate()) {
           this.$.secondPartMaterial.toggleClass("passphraseMaterialConfirmed", true);
+          this.set('secondPartValidated', true);
         } else {
           this.$.secondPartMaterial.toggleClass("passphraseMaterialConfirmed", false);
+          this.set('secondPartValidated', false);
         }
       },
 
-      _allPassphrasesValidated: function (newPassphrase, old) {
-        return newPassphrase && old;
+      _allPassphrasesValidated: function (first, second) {
+        console.log("_allPassphrasesValidated");
+        var bothValidated = first && second;
+        if (bothValidated) {
+          console.log("Validated");
+          return true;
+        } else {
+          return false;
+        }
       },
 
-      createKeyPairMode: function (mode) {
-        return mode=='createKeyPair';
+      listeners: {
+        'oav-non-ascii-in-password': '_noNonAsciiInPassphrases'
+      },
+
+      _noNonAsciiInPassphrases: function () {
+        this.$.createCertPairAjax.showErrorDialog(this.localize('noNonAsciiInPassphrases'))
       },
 
       _validatePassphrase: function (password) {
-        return (password && password.length>this.minimumPassphraseLength);
+        return (password && password.length>=this.minimumPassphraseLength);
       },
 
       _passphraseValidated: function () {
@@ -242,7 +253,7 @@
 
       _createKeyPar: function () {
         if (this._passphraseValidated()) {
-          this.$.createCertPairAjax.body = { password: this.firstPartOfPassphrase + this.secondPartOfPassphrase };
+          this.$.createCertPairAjax.body = { passphrase: this.firstPartOfPassphrase + this.secondPartOfPassphrase };
           this.$.createCertPairAjax.generateRequest();
         } else {
           this.fire('oav-passphrase-not-validated');

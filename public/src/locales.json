@@ -1,5 +1,6 @@
 {
   "en": {
+    "noNonAsciiInPassphrases": "You tried to use an character that is not allowed, please start again and only use allowed characters",
     "confirmPassphrase": "Confirm Passphrase",
     "newPassphrase": "New Passphrase",
     "allowedPassphraseCharacters": "Allowed Passphrase Characters",

@@ -34,7 +34,6 @@
       },
 
       _lowerCasePassword: function (password) {
-        console.log(password);
         if (password) {
           return password.toLowerCase();
         } else {
@@ -51,7 +50,6 @@
         if (password) {
           if (!this.isValid(password)) {
             this.fire('oav-non-ascii-in-password');
-            debugger;
             // Villa: Þú getur bara notað bókstafi frá A-Z, tölur og þessi tákn . , ! vinsamlegast byrjaðu aftur.
             this.set('password', "");
           }
