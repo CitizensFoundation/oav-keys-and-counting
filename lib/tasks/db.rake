@@ -1,31 +1,43 @@
 require 'fileutils'
 
+def dump_database(filename, path, direct_filename=false)
+  cmd = nil
+  tmpSqlFilename = nil
+  FileUtils.mkdir_p(path)
+  with_config do |app, host, db, user, password|
+    sqlConfig = "[mysqldump]\n"
+    if host
+      sqlConfig += "host=#{host}\n"
+    end
+    sqlConfig += "user=#{user}\n"
+    sqlConfig += "password=#{password}\n"
+
+    puts sqlConfig
+    tmpSqlFilename = (0...20).map { (65 + rand(26)).chr }.join
+    tmpSqlFilename = "/tmp/"+tmpSqlFilename
+    puts tmpSqlFilename
+    File.open(tmpSqlFilename, 'w') { |file| file.write(sqlConfig) }
+    if direct_filename
+      cmd = "mysqldump --defaults-extra-file=#{tmpSqlFilename} #{db} > #{path}/#{filename}"
+    else
+      cmd = "mysqldump --defaults-extra-file=#{tmpSqlFilename} #{db} > #{path}/#{app}.#{db}-#{filename}"
+    end
+  end
+  puts cmd
+  exec cmd
+  FileUtils.rm(tmpSqlFilename)
+end
+
 namespace :db do
 
   desc "Dumps the database"
   task :dump_backup => :environment do
-    cmd = nil
-    tmpSqlFilename = nil
-    path = "#{Rails.root}/Backups/sql"
-    FileUtils.mkdir_p(path)
-    with_config do |app, host, db, user, password|
-      sqlConfig = "[mysqldump]\n"
-      if host
-        sqlConfig += "host=#{host}\n"
-      end
-      sqlConfig += "user=#{user}\n"
-      sqlConfig += "password=#{password}\n"
+    dump_database("#{Time.now.to_f}.sql", "#{Rails.root}/Backups/sql")
+  end
 
-      puts sqlConfig
-      tmpSqlFilename = (0...20).map { (65 + rand(26)).chr }.join
-      tmpSqlFilename = "/tmp/"+tmpSqlFilename
-      puts tmpSqlFilename
-      File.open(tmpSqlFilename, 'w') { |file| file.write(sqlConfig) }
-      cmd = "mysqldump --defaults-extra-file=#{tmpSqlFilename} #{db} > #{path}/#{app}.#{db}-#{Time.now.to_f}.sql"
-    end
-    puts cmd
-    exec cmd
-    FileUtils.rm(tmpSqlFilename)
+  desc "Dumps the database for download"
+  task :dump_backup_for_download => :environment do
+    dump_database("latest_for_download.sql", "#{Rails.root}/Backups/sql",true)
   end
 
   desc "Restores the database from default location"

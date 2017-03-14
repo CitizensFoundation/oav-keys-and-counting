@@ -172,12 +172,18 @@ class KeysController < ApplicationController
     end
   end
 
-  private
-
-
-  def download_public_key
-
+  def download_voting_database
+    system "rake db:dump_backup_for_download"
+    download_filename = Rails.root.join("Backups","sql","latest_for_download.sql")
+    puts download_filename
+    if File.exists?(download_filename)
+      send_file download_filename, :filename=>"open_active_voting_database_with_public_key_#{Time.now.to_f}.sql"
+    else
+      render :file=>"#{Rails.root}/public/404.html", :status=>404
+    end
   end
+
+  private
 
   def test_key_pair
     # Show back to user both encrypted and unecrypted
