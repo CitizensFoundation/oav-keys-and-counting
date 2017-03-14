@@ -1,0 +1,49 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/app-localize-behavior/app-localize-behavior.html">
+
+<link rel="import" href="oav-behaviors/app-helpers.html">
+
+<dom-module id="oav-ready-for-voting">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      .buttonContainer {
+        padding: 32px;
+        margin-top: 16px;
+      }
+
+      paper-button {
+        background-color: #FFF;
+        padding: 16px;
+        margin: 16px;
+      }
+
+      a {
+        text-decoration: none;
+        color: #000;
+      }
+    </style>
+
+    <div class="layout vertical center-center buttonContainer">
+      <a href="/keys/download_private_key_backup"><paper-button raised>{{localize('downloadPrivateKeyBackup')}}</paper-button></a>
+      <a href="/keys/download_public_key_backup"><paper-button raised>{{localize('downloadPublicKeyBackup')}}</paper-button></a>
+      <a href="/keys/download_voting_database"><paper-button raised>{{localize('downloadVotingDatabase')}}</paper-button></a>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'oav-ready-for-voting',
+
+      behaviors: [
+        Polymer.appHelpers,
+        Polymer.AppLocalizeBehavior
+      ],
+
+      attached: function() {
+        this.loadLanguage(this.resolveUrl('locales.json'));
+      }
+
+    });
+  </script>
+</dom-module>

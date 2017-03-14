@@ -156,12 +156,27 @@ class KeysController < ApplicationController
     end
   end
 
-  private
-
-  def is_public_key_here
+  def download_public_key_backup
+    if File.exists?(PUBLIC_KEY_PATH)
+      send_file PUBLIC_KEY_PATH, :filename=>"open_active_voting_#{Time.now.to_f}_public.key"
+    else
+      render :status => 404
+    end
   end
 
+  def download_private_key_backup
+    if File.exists?(PRIVATE_KEY_PATH)
+      send_file PRIVATE_KEY_PATH, :filename=>"open_active_voting_#{Time.now.to_f}_private.key"
+    else
+      render :status => 404
+    end
+  end
+
+  private
+
+
   def download_public_key
+
   end
 
   def test_key_pair

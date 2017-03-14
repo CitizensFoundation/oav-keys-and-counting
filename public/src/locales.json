@@ -1,5 +1,9 @@
 {
   "en": {
+    "readyForVoting": "Ready for voting",
+    "downloadPrivateKeyBackup": "Download Private Key Backup",
+    "downloadPublicKeyBackup": "Download Public Key Backup",
+    "downloadVotingDatabase": "Download ready to use voting database",
     "noNonAsciiInPassphrases": "You tried to use an character that is not allowed, please start again and only use allowed characters",
     "confirmPassphrase": "Confirm Passphrase",
     "newPassphrase": "New Passphrase",
