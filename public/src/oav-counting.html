@@ -28,11 +28,16 @@
       oav-confirmed-passphrase-pair {
         margin-top: 16px;
       }
+
+      .progressMessage {
+        padding: 24px;
+        font-size: 24px;
+      }
     </style>
 
     <div class="layout vertical center-center">
 
-      <div class="layout vertical center-center" hidden$="[[countInProgress]]">
+      <div class="layout vertical center-center" hidden$="[[!needPassphrase]]">
 
         <oav-confirmed-passphrase-pair
                 hide-character-help
@@ -48,8 +53,14 @@
 
       </div>
 
-      <div class="layout vertical center-center">
 
+
+      <div class="layout vertical center-center" hidden$="[[!countInProgress">
+        <div class="progressMessage">[[progressMessage]]</div>
+      </div>
+
+      <div class="layout vertical center-center" hidden$="[[!countingCompleted">
+        <div class="progressMessage">[[progressMessage]]</div>
       </div>
 
       <div class="layout horizontal center-center">
@@ -86,9 +97,29 @@
           type: Boolean
         },
 
+        needPassphrase: {
+          type: Boolean,
+          value: true
+        },
+
         countInProgress: {
           type: Boolean,
           value: false
+        },
+
+        countingCompleted: {
+          type: Boolean,
+          value: false
+        },
+
+        progressMessage: {
+          type: String,
+          value: ""
+        },
+
+        completedAreas: {
+          type: Array,
+          value: null
         }
       },
 
@@ -105,10 +136,17 @@
       },
 
       _progressReport: function (event, detail) {
-        debugger;
         var countingProgress = JSON.parse(detail.response);
         debugger;
-        this._triggerCountingProgress();
+        this.set('progressMessage', countingProgress.status);
+        if (!countingProgress.status=='all_completed') {
+          this._triggerCountingProgress();
+        } else {
+          this.set('completedAreas', countingProgress.completed_areas)
+          this.set('countingCompleted', true);
+          this.set('countInProgress', true);
+
+        }
       },
 
       _triggerCountingProgress: function () {
@@ -123,7 +161,8 @@
         if (this._passphraseValidated()) {
           this.$.startCounting.body = { passphrase: this.firstPartOfPassphrase + this.secondPartOfPassphrase };
           this.$.startCounting.generateRequest();
-          this.countInProgress = true;
+          this.set('countInProgress', true);
+          this.set('needPassphrase', false);
         } else {
           this.fire('oav-passphrase-not-validated');
         }
