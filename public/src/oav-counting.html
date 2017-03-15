@@ -20,7 +20,7 @@
 
 
       paper-button {
-        margin-top: 16px;
+        margin: 16px;
         background-color: #FFF;
         padding: 16px;
       }
@@ -53,14 +53,41 @@
 
       </div>
 
-
-
       <div class="layout vertical center-center" hidden$="[[!countInProgress">
         <div class="progressMessage">[[progressMessage]]</div>
       </div>
 
       <div class="layout vertical center-center" hidden$="[[!countingCompleted">
-        <div class="progressMessage">[[progressMessage]]</div>
+        <template is="dom-repeat" items="[[completedAreas]]" as="area">
+          <paper-material class="areaResults">
+            <div class="layout vertical">
+              <div class="areaResultsHeader">
+                [[area.areaName]]
+              </div>
+              <div class="areaLink">
+                <a href="/counting/download_results_file?filename=[[area.areaId]]_[[areaTimeForFiles]]_voting_results.csv">
+                  <paper-button>
+                    [[localize('downloadVotingResults')]]
+                  </paper-button>
+                </a>
+              </div>
+              <div class="areaLink">
+                <a href="/counting/download_results_file?filename=[[area.areaId]]_[[areaTimeForFiles]]_counted_unencrypted_audit_report.csv">
+                  <paper-button>
+                    [[localize('downloadUnencryptedVotes')]]
+                  </paper-button>
+                </a>
+              </div>
+              <div class="areaLink">
+                <a href="/counting/download_results_file?filename=[[area.areaId]]_[[areaTimeForFiles]]_audit_report.csv">
+                  <paper-button>
+                    [[localize('downloadAuditReport')]]
+                  </paper-button>
+                </a>
+              </div>
+            </div>
+          </paper-material>
+        </template>
       </div>
 
       <div class="layout horizontal center-center">
@@ -120,6 +147,10 @@
         completedAreas: {
           type: Array,
           value: null
+        },
+
+        areaTimeForFiles: {
+          type: String
         }
       },
 
@@ -142,7 +173,8 @@
         if (!countingProgress.status=='all_completed') {
           this._triggerCountingProgress();
         } else {
-          this.set('completedAreas', countingProgress.completed_areas)
+          this.set('completedAreas', countingProgress.completed_areas);
+          this.set('areaTimeForFiles', countingProgress.time_for_files);
           this.set('countingCompleted', true);
           this.set('countInProgress', true);
 

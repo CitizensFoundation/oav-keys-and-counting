@@ -42,4 +42,8 @@ class CountingController < ApplicationController
       format.json { render :json => BudgetConfig.first.counting_progress}
     end
   end
+
+  def download_results_file
+    send_file Rails.root.join("results", params[:filename])
+  end
 end
