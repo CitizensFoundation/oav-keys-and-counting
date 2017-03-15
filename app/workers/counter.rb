@@ -15,7 +15,7 @@ class CounterWorker
       BudgetBallotArea.all.order(:id).each do |area, index|
         #puts "Counting votes for area: #{area.name}"
         counting_progress = { status: "starting_area_count", areaName: area.name, index: index }
-        BudgetConfig.first.update_attribute(:counting_progress, counting_progress.to_json)
+        BudgetConfig.first.update_attribute(:counting_progress, counting_progress.to_json.to_s)
 
         sleep 1
         puts "PASSPHRASE: #{passphrase}"
