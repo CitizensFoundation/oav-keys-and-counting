@@ -16,9 +16,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+require Rails.root.join("app","workers","counter.rb")
+
 class CountingController < ApplicationController
 
-  after_filter :log_session_id
+#  after_filter :log_session_id
 
   def counting_info
     respond_to do |format|
@@ -28,13 +30,16 @@ class CountingController < ApplicationController
     end
   end
 
-  def start_count
-    CountingWorker.perform_async
+  def start_counting
+    CounterWorker.perform_async(params[:passphrase])
+    respond_to do |format|
+      format.json { render :json => {:ok => true }}
+    end
   end
 
   def counting_progress
     respond_to do |format|
-      format.json { render :json => {:counting_progress => BudgetConfig.first.counting_progress }}
+      format.json { render :json => BudgetConfig.first.counting_progress}
     end
   end
 end

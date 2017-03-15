@@ -18,12 +18,6 @@
 
 require 'fileutils'
 
-MASTER_KEY_PAIR_PATH = Rails.root.join("master_key_pair")
-PRIVATE_KEY_PATH =  Rails.root.join("master_key_pair","private.key")
-PUBLIC_KEY_PATH = Rails.root.join("master_key_pair","public.key")
-TEMP_PASSPHRASE_FILE_PATH = Rails.root.join("/tmp/tmpPassphrase")
-TEMP_OLD_PASSPHRASE_FILE_PATH = Rails.root.join("/tmp/tmpOldPassphrase")
-
 class KeysController < ApplicationController
 
   def create_public_private_key_pair
@@ -128,7 +122,7 @@ class KeysController < ApplicationController
     end
 
     puts "Backup private and public keys"
-    backupPath = "#{Rails.root}/Backups/master_key_pairs/#{Time.now.to_f}"
+    backupPath = "#{Rails.root}/Backups/master_key_pairs/#{Time.now.strftime('%Y_%m_%d.%H_%M_%S')}"
     FileUtils.mkdir_p(backupPath)
 
     if private_key_exists
@@ -158,7 +152,7 @@ class KeysController < ApplicationController
 
   def download_public_key_backup
     if File.exists?(PUBLIC_KEY_PATH)
-      send_file PUBLIC_KEY_PATH, :filename=>"open_active_voting_#{Time.now.to_f}_public.key"
+      send_file PUBLIC_KEY_PATH, :filename=>"open_active_voting_#{Time.now.strftime('%Y_%m_%d.%H_%M_%S')}_public.key"
     else
       render :status => 404
     end
@@ -166,7 +160,7 @@ class KeysController < ApplicationController
 
   def download_private_key_backup
     if File.exists?(PRIVATE_KEY_PATH)
-      send_file PRIVATE_KEY_PATH, :filename=>"open_active_voting_#{Time.now.to_f}_private.key"
+      send_file PRIVATE_KEY_PATH, :filename=>"open_active_voting_#{Time.now.strftime('%Y_%m_%d.%H_%M_%S')}_private.key"
     else
       render :status => 404
     end
@@ -177,7 +171,7 @@ class KeysController < ApplicationController
     download_filename = Rails.root.join("Backups","sql","latest_for_download.sql")
     puts download_filename
     if File.exists?(download_filename)
-      send_file download_filename, :filename=>"open_active_voting_database_with_public_key_#{Time.now.to_f}.sql"
+      send_file download_filename, :filename=>"open_active_voting_database_with_public_key_#{Time.now.strftime('%Y_%m_%d.%H_%M_%S')}.sql"
     else
       render :file=>"#{Rails.root}/public/404.html", :status=>404
     end

@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   #root 'votes#check_authentication'
   #root :to => redirect('/build/bundled/index.html')
   get "counting/counting_info"
-  put "counting/start_count"
+  post "counting/start_counting"
   get "counting/counting_progress"
   get "keys/boot"
   delete "keys/backup_and_reset"

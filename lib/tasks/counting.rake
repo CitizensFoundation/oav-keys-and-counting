@@ -40,7 +40,7 @@ namespace :counting do
 
     BudgetBallotArea.all.each do |area|
       puts "Counting votes for area: #{area.name}"
-      count  = BudgetVoteCounting.new(ENV['private_key'])
+      count  = BudgetVoteCounting.new(ENV['private_key'], nil)
       count.count_unique_votes(area.id)
 
       puts "Writing unencrypted audit report"

@@ -46,6 +46,7 @@
 
 <link rel="import" href="oav-create-key-pair.html">
 <link rel="import" href="oav-ready-for-voting.html">
+<link rel="import" href="oav-counting.html">
 
 <dom-module id="oav-admin-app">
 
@@ -228,7 +229,8 @@
         'app-resources-loaded': '_translationLoaded',
         'oav-set-title': '_setTitle',
         'oav-error': '_errorHandler',
-        'oav-set-area': '_setArea'
+        'oav-set-area': '_setArea',
+        'oav-reboot': '_boot'
       },
 
       observers: [
@@ -252,6 +254,8 @@
           this.set('page','createKeyPair');
         } else if (response.boot_state=="config") {
           this.set('page', 'readyForVoting');
+        } else if (response.boot_state=="counting") {
+          this.set('page', 'counting');
         }
       },
 

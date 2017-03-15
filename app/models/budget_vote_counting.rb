@@ -21,10 +21,12 @@ require 'csv'
 class BudgetVoteCounting
   attr_reader :item_ids_count
 
-  def initialize(private_key_file)
+  def initialize(private_key_file, passphrase, time_for_filename=nil)
     @item_ids_count = Hash.new
     @item_ids_selected_count = Hash.new
     @private_key_file = private_key_file
+    @passphrase = passphrase
+    @time_for_filename = time_for_filename
     @invalid_votes = []
   end
 
@@ -98,7 +100,7 @@ class BudgetVoteCounting
       csv << ["Hverfa ID","Dagsetning","Kosin verkefna IDs"]
       FinalSplitVote.where(["final_split_votes.area_id = ?",@area_id]).includes(:vote).order("votes.created_at").all.each do |final_vote|
         begin
-          csv << [final_vote.area_id,final_vote.vote.created_at]+BudgetVoteHelper.new(final_vote.payload_data, @private_key_file, final_vote).unencryped_vote_for_audit_csv
+          csv << [final_vote.area_id,final_vote.vote.created_at]+BudgetVoteHelper.new(final_vote.payload_data, @private_key_file, @passphrase, final_vote).unencryped_vote_for_audit_csv
         rescue Exception => e
           csv << [final_vote.area_id,final_vote.vote.created_at,"Ógilt atkvæði",final_vote.inspect,e.message]
         end
@@ -121,7 +123,7 @@ class BudgetVoteCounting
   def count_all_test_votes_from_browser(test_votes,area_id=nil,write_out_path=nil)
     @area_id = area_id
     test_votes.each do |vote|
-      decrypted_vote = BudgetVoteHelper.new(vote, @private_key_file, vote)
+      decrypted_vote = BudgetVoteHelper.new(vote, @private_key_file, @passphrase, vote)
       add_votes(decrypted_vote.unpack_without_encryption)
     end
     if area_id
@@ -155,7 +157,7 @@ class BudgetVoteCounting
 
   # Decrypt and add votes from ballot to total
   def process_vote(vote)
-    decrypted_vote = BudgetVoteHelper.new(vote.payload_data, @private_key_file, vote)
+    decrypted_vote = BudgetVoteHelper.new(vote.payload_data, @private_key_file, @passphrase, vote)
     add_votes(decrypted_vote.unpack)
   end
 
@@ -214,6 +216,10 @@ class BudgetVoteCounting
   end
 
   def get_time_for_filename
-    Time.now.strftime('%Y_%m_%d.%H_%M_%S')
+    if @time_for_filename
+      @time_for_filename
+    else
+      Time.now.strftime('%Y_%m_%d.%H_%M_%S')
+    end
   end
 end

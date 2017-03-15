@@ -1,27 +1,35 @@
+
 class CounterWorker
   include Sidekiq::Worker
-    def perform
+    def perform(passphrase)
       # Starting vote counting
       Dir.mkdir("results") unless File.exists?("results")
+
+      time_for_files = Time.now.strftime('%Y_%m_%d.%H_%M_%S')
 
       # Splitting user id hash and vote and generating final votes database tables
       Vote.split_and_generate_final_votes!
 
-      BudgetBallotArea.all.each do |area, index|
-        #puts "Counting votes for area: #{area.name}"
-        counting_progress = { status: starting_area_count, areaName: area.name, index: index }
-        BudgetBallot.update(:counting_progress, counting_progress.to_s)
+      completed_areas = []
 
-        count  = BudgetVoteCounting.new(ENV['private_key'])
+      BudgetBallotArea.all.order(:id).each do |area, index|
+        #puts "Counting votes for area: #{area.name}"
+        counting_progress = { status: "starting_area_count", areaName: area.name, index: index }
+        BudgetConfig.first.update_attribute(:counting_progress, counting_progress.to_json)
+
+        puts "PASSPHRASE: #{passphrase}"
+        count  = BudgetVoteCounting.new(PRIVATE_KEY_PATH, passphrase, time_for_files)
         count.count_unique_votes(area.id)
 
         # Writing unencrypted audit report
         count.write_counted_unencrypted_audit_report
 
-        counting_progress = { status: completed_area_count, areaName: area.name, index: index }
-        BudgetBallot.update(:counting_progress, counting_progress.to_s)
+        completed_areas << counting_progress = { status: "completed_area_count", areaName: area.name, areaId: area.id, index: index }
+        BudgetConfig.first.update_attribute(:counting_progress, counting_progress.to_json.to_s)
+        puts counting_progress.to_json
       end
-      counting_progress = { status: all_completed }
-      BudgetBallot.update(:counting_progress, counting_progress.to_s)
+      counting_progress = { status: "all_completed", time_for_files: time_for_files, completed_areas: completed_areas }.to_json
+      BudgetConfig.first.update_attribute(:counting_progress, counting_progress.to_json.to_s)
+      puts counting_progress.to_s
     end
 end

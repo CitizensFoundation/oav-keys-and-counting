@@ -1,5 +1,7 @@
 {
   "en": {
+    "counting": "Counting",
+    "startCounting": "Start counting",
     "readyForVoting": "Ready for voting",
     "downloadPrivateKeyBackup": "Download Private Key Backup",
     "downloadPublicKeyBackup": "Download Public Key Backup",

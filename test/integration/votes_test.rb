@@ -142,11 +142,11 @@ class VoteThroughBrowsers < ActionDispatch::IntegrationTest
     @area_ids.each do |area_id|
       puts "Area id #{area_id}"
       puts "Count unique votes from database"
-      database_count = BudgetVoteCounting.new(Rails.root.join('test','keys','privkey.pem'))
+      database_count = BudgetVoteCounting.new(Rails.root.join('test','keys','privkey.pem'), nil)
       @database_csv_filenames << database_count.count_unique_votes(area_id)
       database_count.write_counted_unencrypted_audit_report
 
-      test_count = BudgetVoteCounting.new(Rails.root.join('test','keys','privkey.pem'))
+      test_count = BudgetVoteCounting.new(Rails.root.join('test','keys','privkey.pem'), nil)
       test_count.count_all_test_votes_from_browser(get_unique_votes(area_id),area_id)
       @test_csv_filenames << test_count.write_voting_results_report("test_voting_results.csv")
 
@@ -180,12 +180,12 @@ class VoteThroughBrowsers < ActionDispatch::IntegrationTest
     browser_votes.each do |vote| puts vote.inspect end # DEBUG
 
     puts "Counting all database votes"
-    database_count = BudgetVoteCounting.new(Rails.root.join('test','keys','privkey.pem'))
+    database_count = BudgetVoteCounting.new(Rails.root.join('test','keys','privkey.pem'), nil)
     database_count.count_all_votes
     puts "All counted votes from database: #{Vote.count} #{database_count.item_ids_count}"
 
     puts "Counting all browser votes"
-    test_count = BudgetVoteCounting.new(Rails.root.join('test','keys','privkey.pem'))
+    test_count = BudgetVoteCounting.new(Rails.root.join('test','keys','privkey.pem'), nil)
     test_count.count_all_test_votes_from_browser(browser_votes)
     puts "All counted votes from browser: #{browser_votes.count} #{test_count.item_ids_count}"
 

@@ -25,11 +25,11 @@ class BudgetVoteHelper
   @@private_key_file_data = nil
   @@private_key = nil
 
-  def initialize(encrypted_payload, private_key_file, vote)
+  def initialize(encrypted_payload, private_key_file, passphrase, vote)
     @idea_ids = []
     @encrypted_payload = encrypted_payload
     @@private_key_file_data = File.read(private_key_file) unless @@private_key_file_data
-    @@private_key = OpenSSL::PKey::RSA.new(@@private_key_file_data,nil) unless @@private_key
+    @@private_key = OpenSSL::PKey::RSA.new(@@private_key_file_data, passphrase) unless @@private_key
     @vote = vote
   end
 
