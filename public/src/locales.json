@@ -1,5 +1,10 @@
 {
   "en": {
+    "progress": "Progress",
+    "completed_area_count": "Completed area count",
+    "starting_area_count": "Starting area count",
+    "all_completed": "All vote counting completed",
+    "recount": "Recount",
     "downloadVotingResults": "Download Voting Results",
     "downloadUnencryptedVotes": "Download Unencrypted Votes",
     "downloadAuditReport": "Download Audit Report",

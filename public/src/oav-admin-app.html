@@ -156,7 +156,9 @@
           </div>
           <oav-create-key-pair id="createKeyPair" name="createKeyPair"></oav-create-key-pair>
           <oav-test-key-pair id="testKeyPair" name="testKeyPair"></oav-test-key-pair>
-          <oav-counting id="counting" name="counting"></oav-counting>
+          <oav-counting id="counting" name="counting" completed-areas="{{completedAreas}}"
+                        area-time-for-files="{{areaTimeForFiles}}"
+                        counting-completed="{{countingCompleted}}"></oav-counting>
           <oav-config id="config" name="config"></oav-config>
           <oav-ready-for-voting id="readyForVoting" name="readyForVoting"></oav-ready-for-voting>
         </iron-pages>
@@ -222,6 +224,20 @@
         haveSetLanguage: {
           type: Boolean,
           value: false
+        },
+
+        completedAreas: {
+          type: Array,
+          value: null
+        },
+
+        areaTimeForFiles: {
+          type: String
+        },
+
+        countingCompleted: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -255,6 +271,10 @@
         } else if (response.boot_state=="config") {
           this.set('page', 'readyForVoting');
         } else if (response.boot_state=="counting") {
+          if (response.counting_progress) {
+            this.$.counting.countInProgress = true;
+            this.$.counting._triggerCountingProgress();
+          }
           this.set('page', 'counting');
         }
       },

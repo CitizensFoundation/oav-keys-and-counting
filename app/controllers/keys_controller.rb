@@ -84,7 +84,6 @@ class KeysController < ApplicationController
       private_key_exists = File.exists?(PRIVATE_KEY_PATH)
       public_key_exists = (BudgetConfig.first and BudgetConfig.first.public_key) != nil
       public_key_file_exists = File.exists?(PUBLIC_KEY_PATH)
-
       if vote_count>0 and private_key_exists and public_key_exists
         boot_state = "counting"
       elsif private_key_exists and public_key_exists
@@ -102,7 +101,8 @@ class KeysController < ApplicationController
                                      :private_key_exists => private_key_exists,
                                      :public_key_exists => public_key_exists,
                                      :public_key_file_exists => public_key_file_exists,
-                                     :exception => exception }
+                                     :exception => exception,
+                                     :counting_progress => BudgetConfig.first.counting_progress}
       }
     end
   end

@@ -31,6 +31,9 @@ class CountingController < ApplicationController
   end
 
   def start_counting
+    if params[:recount] and params[:recount]==true
+      BudgetConfig.first.update_attribute(:counting_progress, nil)
+    end
     CounterWorker.perform_async(params[:passphrase])
     respond_to do |format|
       format.json { render :json => {:ok => true }}

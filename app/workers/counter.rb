@@ -17,6 +17,7 @@ class CounterWorker
         counting_progress = { status: "starting_area_count", areaName: area.name, index: index }
         BudgetConfig.first.update_attribute(:counting_progress, counting_progress.to_json)
 
+        sleep 1
         puts "PASSPHRASE: #{passphrase}"
         count  = BudgetVoteCounting.new(PRIVATE_KEY_PATH, passphrase, time_for_files)
         count.count_unique_votes(area.id)
