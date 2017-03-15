@@ -33,6 +33,26 @@
         padding: 24px;
         font-size: 24px;
       }
+
+      .areaResults {
+        padding: 16px;
+        background-color: #f9f9f9;
+        margin: 16px;
+      }
+
+      a {
+        text-decoration: none;
+        color: black;
+      }
+
+      .areaResultsHeader {
+        font-size: 24px;
+        padding: 8px;
+        border-bottom: 2px solid;
+        margin-bottom: 8px;
+        width: 90%;
+        text-align: center;
+      }
     </style>
 
     <div class="layout vertical center-center">
@@ -60,27 +80,27 @@
       <div class="layout vertical center-center" hidden$="[[!countingCompleted">
         <template is="dom-repeat" items="[[completedAreas]]" as="area">
           <paper-material class="areaResults">
-            <div class="layout vertical">
-              <div class="areaResultsHeader">
+            <div class="layout vertical center-center">
+              <div class="areaResultsHeader layout horiztonal center-center">
                 [[area.areaName]]
               </div>
               <div class="areaLink">
                 <a href="/counting/download_results_file?filename=[[area.areaId]]_[[areaTimeForFiles]]_voting_results.csv">
-                  <paper-button>
+                  <paper-button raised>
                     [[localize('downloadVotingResults')]]
                   </paper-button>
                 </a>
               </div>
               <div class="areaLink">
                 <a href="/counting/download_results_file?filename=[[area.areaId]]_[[areaTimeForFiles]]_counted_unencrypted_audit_report.csv">
-                  <paper-button>
+                  <paper-button raised>
                     [[localize('downloadUnencryptedVotes')]]
                   </paper-button>
                 </a>
               </div>
               <div class="areaLink">
                 <a href="/counting/download_results_file?filename=[[area.areaId]]_[[areaTimeForFiles]]_audit_report.csv">
-                  <paper-button>
+                  <paper-button raised>
                     [[localize('downloadAuditReport')]]
                   </paper-button>
                 </a>
@@ -168,7 +188,6 @@
 
       _progressReport: function (event, detail) {
         var countingProgress = JSON.parse(detail.response);
-        debugger;
         this.set('progressMessage', countingProgress.status);
         if (!countingProgress.status=='all_completed') {
           this._triggerCountingProgress();
