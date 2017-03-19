@@ -1,5 +1,8 @@
 {
   "en": {
+    "votesCount": "Votes count",
+    "countedVotesCount": "Counted votes count",
+    "invalidVotesCount": "Invalid votes count",
     "progress": "Progress",
     "completed_area_count": "Completed area count",
     "starting_area_count": "Starting area count",

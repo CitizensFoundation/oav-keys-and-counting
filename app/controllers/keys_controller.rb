@@ -102,7 +102,7 @@ class KeysController < ApplicationController
                                      :public_key_exists => public_key_exists,
                                      :public_key_file_exists => public_key_file_exists,
                                      :exception => exception,
-                                     :counting_progress => BudgetConfig.first.counting_progress}
+                                     :counting_progress => BudgetConfig.first ? BudgetConfig.first.counting_progress : nil }
       }
     end
   end

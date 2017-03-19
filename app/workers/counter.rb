@@ -25,7 +25,10 @@ class CounterWorker
         # Writing unencrypted audit report
         count.write_counted_unencrypted_audit_report
 
-        completed_areas << counting_progress = { status: "completed_area_count", areaName: area.name, areaId: area.id, index: index }
+        completed_areas << counting_progress = { status: "completed_area_count", votes_count: count.votes_count,
+                                                 counted_votes_count: count.counted_votes_count,
+                                                 invalid_votes_count: count.invalid_votes_count,
+                                                 areaName: area.name, areaId: area.id, index: index }
         BudgetConfig.first.update_attribute(:counting_progress, counting_progress.to_json.to_s)
         puts counting_progress.to_json
       end

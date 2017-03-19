@@ -42,7 +42,7 @@ class CountingController < ApplicationController
 
   def counting_progress
     respond_to do |format|
-      format.json { render :json => BudgetConfig.first.counting_progress}
+      format.json { render :json => BudgetConfig.first.counting_progress }
     end
   end
 

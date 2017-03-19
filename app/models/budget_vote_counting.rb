@@ -19,7 +19,7 @@
 require 'csv'
 
 class BudgetVoteCounting
-  attr_reader :item_ids_count
+  attr_reader :item_ids_count, :votes_count, :counted_votes_count, :invalid_votes_count
 
   def initialize(private_key_file, passphrase, time_for_filename=nil)
     @item_ids_count = Hash.new
@@ -28,6 +28,9 @@ class BudgetVoteCounting
     @passphrase = passphrase
     @time_for_filename = time_for_filename
     @invalid_votes = []
+    @votes_count = 0
+    @counted_votes_count = 0
+    @invalid_votes_count = 0
   end
 
   # Count all unique votes from the same identity
@@ -35,9 +38,12 @@ class BudgetVoteCounting
 
     @area_id = area_id
 
+    @votes_count = Vote.where(:area_id=>@area_id).count
+
     # Use data from the final split vote table
     final_split_vote = FinalSplitVote.where(:area_id=>area_id)
-    puts "Counting #{final_split_vote.length} votes"
+    @counted_votes_count = final_split_vote.length
+    puts "Counting #{@counted_votes_count} votes"
 
     # Process and count all the votes for this area
     final_split_vote.all.each do |vote|
@@ -47,6 +53,8 @@ class BudgetVoteCounting
         puts @invalid_votes << [vote.inspect,e.message]
       end
     end
+
+    @invalid_votes_count = @invalid_votes.length
 
     select_top_items_that_still_fit_budget
 
