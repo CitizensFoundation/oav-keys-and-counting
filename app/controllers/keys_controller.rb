@@ -80,15 +80,18 @@ class KeysController < ApplicationController
     exception = nil
 
     begin
-      vote_count = Vote.count
+      vote_table_exists = ActiveRecord::Base.connection.table_exists? 'votes'
+      config_table_exists = ActiveRecord::Base.connection.table_exists? 'config'
+
+      vote_count = (vote_table_exists and Vote.count) ? Vote.count : -1
       private_key_exists = File.exists?(PRIVATE_KEY_PATH)
-      public_key_exists = (BudgetConfig.first and BudgetConfig.first.public_key) != nil
+      public_key_exists = (config_table_exists and BudgetConfig.first and BudgetConfig.first.public_key) != nil
       public_key_file_exists = File.exists?(PUBLIC_KEY_PATH)
       if vote_count>0 and private_key_exists and public_key_exists
         boot_state = "counting"
-      elsif private_key_exists and public_key_exists
+      elsif config_table_exists and vote_table_exists and private_key_exists and public_key_exists
         boot_state = "config"
-      elsif vote_count==0 and !private_key_exists and !public_key_exists
+      elsif vote_count<1 and !private_key_exists and !public_key_exists
         boot_state = "createKeyPair"
       end
     rescue Exception => e
@@ -102,7 +105,7 @@ class KeysController < ApplicationController
                                      :public_key_exists => public_key_exists,
                                      :public_key_file_exists => public_key_file_exists,
                                      :exception => exception,
-                                     :counting_progress => BudgetConfig.first ? BudgetConfig.first.counting_progress : nil }
+                                     :counting_progress => (config_table_exists && BudgetConfig.first) ? BudgetConfig.first.counting_progress : nil }
       }
     end
   end
