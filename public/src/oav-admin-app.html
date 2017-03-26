@@ -254,6 +254,8 @@
       ],
 
       _backupAndResetResponse: function (event, detail) {
+        var dialog = Polymer.dom(document).querySelector('oav-admin-app').getDialog("unexpectedStateDialog");
+        dialog.close();
         if (detail.response.ok) {
           this._boot();
         } else {

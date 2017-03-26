@@ -114,6 +114,10 @@
         this.callbackFunction = callbackFunction;
         this.set('open', true);
         this.$$("#dialog").open();
+      },
+
+      close: function () {
+        this.$$("#dialog").close();
       }
     })
   })();
