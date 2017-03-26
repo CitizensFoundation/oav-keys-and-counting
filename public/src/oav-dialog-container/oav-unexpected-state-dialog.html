@@ -37,7 +37,7 @@
       <div class="bootHeader">[[localize('unexpectedBootState')]]</div>
 
       <div class="layout vertical bootState">
-        <div class="bootElement">
+        <div class="bootElement" hidden$="[[showVoteCount]]">
           vote_count: [[response.vote_count]]
         </div>
         <div class="bootElement">
@@ -78,7 +78,8 @@
       properties: {
 
         response: {
-          type: String
+          type: String,
+          observer: '_responseChanged'
         },
 
         open: {
@@ -86,7 +87,18 @@
           value: false
         },
 
+        showVoteCount: {
+          type: Boolean,
+          value: false
+        },
+
         callbackFunction: Function
+      },
+
+      _responseChanged: function (response) {
+        if (response && response.vote_count && response.vote_count > -1) {
+          this.set('showVoteCount', true);
+        }
       },
 
       _backupAndReset: function () {
