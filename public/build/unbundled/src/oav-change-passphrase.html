@@ -1,0 +1,116 @@
+<html><head><link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer-ts/polymer-ts.html">
+<link rel="import" href="../bower_components/paper-map-info/paper-map-info.html">
+
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../bower_components/app-localize-behavior/app-localize-behavior.html">
+
+<link rel="import" href="oav-behaviors/app-helpers.html">
+<link rel="import" href="oav-key-passphrase-input.html">
+
+</head><body><dom-module id="oav-change-passphrase">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      .createKeyPair {
+        background-color: #FFF;
+      }
+
+      .passphrases {
+        margin: 16px;
+        padding: 16px;
+      }
+
+      .passphraseMaterial {
+        padding: 16px;
+        width: 250px;
+        margin: 16px;
+      }
+    </style>
+
+    <div class="layout vertical center-center createKeyPair">
+
+      <template is="dom-if" if="[[changePassphraseMode]]" restamp="">
+        <div class="header">
+          {{localize('changePassphrase')}}
+        </div>
+
+        <div class="allowedCharsInfo">
+          {{localize('allowedPassphraseCharacters')}}
+        </div>
+
+        <div class="allowedCharsInfoExample">
+          {{localize('allowedPassphraseCharactersExample')}}
+        </div>
+
+        <div class="subHeader">
+          {{localize('oldPassphrase')}}
+        </div>
+        <div class="layout horizontal passphrases">
+          <paper-material class="layout vertical passphraseMaterial">
+            <div>{{localize('firstPartOfOldPassphrase')}}</div>
+            <oav-key-passphrase-input lower-case-password="{{firstPartOfOldPassphrase}}"></oav-key-passphrase-input>
+          </paper-material>
+          <paper-material class="layout vertical passphraseMaterial">
+            <div>{{localize('secondPartOfOldPassphrase')}}</div>
+            <oav-key-passphrase-input lower-case-password="{{secondPartOfOldPassphrase}}"></oav-key-passphrase-input>
+          </paper-material>
+        </div>
+        <div class="subHeader">
+          {{localize('newPassphrase')}}
+        </div>
+        <div class="layout horizontal">
+          <paper-material class="layout vertical passphraseMaterial">
+            <div>{{localize('firstPartOfPassphrase')}}</div>
+            <oav-key-passphrase-input lower-case-password="{{firstPartOfPassphrase}}"></oav-key-passphrase-input>
+          </paper-material>
+          <paper-material class="layout vertical passphraseMaterial">
+            <div>{{localize('secondPartOfPassphrase')}}</div>
+            <oav-key-passphrase-input lower-case-password="{{secondPartOfPassphrase}}"></oav-key-passphrase-input>
+          </paper-material>
+        </div>
+
+        <div class="createButtonContainer">
+          <paper-button disabled$="[[!allPassphrasesValidated]]" on-tap="_changePassphrase">{{localize('changePassphrase')}}</paper-button>
+        </div>
+      </template>
+
+      <div class="header">
+        {{localize('createKeyPairHeader')}}
+      </div>
+
+      <template is="dom-if" if="[[createKeyPairMode]]" restamp="">
+        <div class="layout horizontal">
+          <paper-material class="layout vertical passphraseMaterial">
+            <div>{{localize('firstPartOfPassphrase')}}</div>
+            <oav-key-passphrase-input lower-case-password="{{firstPartOfPassphrase}}"></oav-key-passphrase-input>
+          </paper-material>
+          <paper-material class="layout vertical passphraseMaterial">
+            <div>{{localize('secondPartOfPassphrase')}}</div>
+            <oav-key-passphrase-input lower-case-password="{{secondPartOfPassphrase}}"></oav-key-passphrase-input>
+          </paper-material>
+        </div>
+
+        <div class="createButtonContainer">
+          <paper-button disabled$="[[!passphraseValidated]]" on-tap="_createKeyPar">{{localize('createKeyPair')}}</paper-button>
+        </div>
+      </template>
+
+      <div hidden$="[[publicKeyAvilable]]">
+        <a href="/keys/download_public_key">{{localize('downloadPublicKey')}}</a>
+      </div>
+
+      <div class="layout horizontal center-center">
+        <oav-ajax id="createCertPairAjax" url="/keys/create_public_private_key_pair" on-response="_createdKeyPairResponse"></oav-ajax>
+        <oav-ajax id="changePassphraseAjax" url="/keys/change_passphrase" on-response="_changePassphraseResponse"></oav-ajax>
+      </div>
+    </div>
+  </template>
+
+  <script>Polymer({is:"oav-change-passphrase",behaviors:[Polymer.appHelpers,Polymer.AppLocalizeBehavior],properties:{mode:{type:String,value:"changePassphrase"},createKeyPairMode:{type:Boolean,computed:"_createKeyPairMode(mode)"},changePassphraseMode:{type:Boolean,computed:"_changePassphraseMode(mode)"},minimumPassPhraseLength:{type:Number,value:8},firstPartOfPassphrase:{type:String},secondPartOfPassphrase:{type:String},firstPartOfOldPassphrase:{type:String},secondPartOfOldPassphrase:{type:String},firstPartValidated:{type:Boolean,computed:"_firstPartValidated(firstPartOfPassphrase, oldPassphraseValidated)"},allPassphrasesValidated:{type:Boolean,computed:"_allPassphrasesValidated(passphraseValidated, oldPassphraseValidated)"},passphraseValidated:{type:Boolean,computed:"_passphraseValidated(firstPassphrase, secondPassphrase)"},oldPassphraseValidated:{type:Boolean,computed:"_passphraseValidated(firstOldPassphrase, secondOldPassphrase)"},publicKeyAvilable:{type:Boolean,value:!1}},ready:function(){},_allPassphrasesValidated:function(a,e){return a&&e},createKeyPairMode:function(a){return"createKeyPair"==a},_changePassphraseMode:function(a){return"changePassphrase"==a},_validatePassphrase:function(a){return a&&a.length>this.minimumPassphraseLength},_passphraseValidated:function(){return this._validatePassphrase(this.firstPartOfPassphrase)&&this._validatePassphrase(this.secondPartOfPassphrase)},attached:function(){this.loadLanguage(this.resolveUrl("locales.json"))},_createKeyPar:function(){this._passphraseValidated()?(this.$.createCertPairAjax.body={password:this.firstPartOfPassphrase+this.secondPartOfPassphrase},this.$.createCertPairAjax.generateRequest()):this.fire("oav-passphrase-not-validated")},_createdKeyPairResponse:function(a,e){}});</script>
+</dom-module></body></html>

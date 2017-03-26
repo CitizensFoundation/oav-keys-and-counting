@@ -1,0 +1,11 @@
+<html><head><link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+
+</head><body><dom-module id="oav-key-passphrase-input">
+  <template>
+    <paper-input id="input" auto-validate="" minlength$="[[minLength]]" label$="[[label]]" type="password" value="{{password}}"></paper-input>
+  </template>
+
+  <script>Polymer({is:"oav-key-passphrase-input",properties:{password:{type:String,observer:"_passwordChanged",value:""},minLength:Number,lowerCasePassword:{type:String,computed:"_lowerCasePassword(password)",notify:!0,reflectToAttribute:!0},label:String},validate:function(){return this.$.input.validate()},_lowerCasePassword:function(s){return s?s.toLowerCase():null},isValid:function(s){return/^[\x00-\x7F]*$/.test(s)},_passwordChanged:function(s){s&&(this.isValid(s)||(this.fire("oav-non-ascii-in-password"),this.set("password","")))}});</script>
+</dom-module>
+</body></html>

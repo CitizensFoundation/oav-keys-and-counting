@@ -1,0 +1,155 @@
+<html><head><link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html">
+
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="oav-behaviors/app-helpers.html">
+
+<link rel="import" href="oav-app-globals/oav-app-globals.html">
+<link rel="import" href="oav-dialog-container/oav-dialog-container.html">
+
+<link rel="import" href="../bower_components/paper-styles/typography.html">
+<link rel="import" href="../bower_components/paper-styles/color.html">
+
+<link rel="import" href="oav-create-key-pair.html">
+<link rel="import" href="oav-ready-for-voting.html">
+<link rel="import" href="oav-counting.html">
+
+</head><body><dom-module id="oav-admin-app">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+
+      :host {
+        display: block;
+        --app-primary-color: #006C32;
+        --app-secondary-color: black;
+        --app-main-backround-color: #e0e0e0;
+        --app-accent-color: var(--paper-orange-a700);
+        --app-accent-color-light: var(--paper-orange-a200);
+        --app-kopavogur-green-grass: #e0e0e0;
+
+        --paper-tabs-selection-bar-color: var(--app-accent-color);
+
+      }
+
+      app-header {
+        background-color: var(--app-primary-color);
+        color: #fff;
+      }
+
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+
+      .drawer-list {
+        margin: 0 20px;
+      }
+
+      .drawer-list a {
+        display: block;
+        padding: 0 16px;
+        line-height: 40px;
+        text-decoration: none;
+        color: var(--app-secondary-color);
+      }
+
+      .drawer-list a.iron-selected {
+        color: black;
+        font-weight: bold;
+      }
+
+      .drawer-list a.subroute {
+        padding-left: 32px;
+      }
+
+      app-toolbar {
+      }
+
+      .title {
+        font-size: 24px;
+      }
+
+      paper-icon-button {
+        width: 50px;
+        height: 50px;
+      }
+
+      @media (max-width: 640px) {
+        paper-icon-button {
+          width: 40px;
+          height: 40px;
+        }
+      }
+
+      @media (max-width: 1000px) {
+        .title {
+          font-size: 17px;
+        }
+      }
+
+      .exitIconInBudget {
+        position: absolute;
+        top: 0;
+        left: 0;
+        color: #111;
+      }
+
+      .helpIconInBudget  {
+        position: absolute;
+        top: 0;
+        right: 0;
+        color: #777;
+      }
+    </style>
+
+    <iron-signals on-iron-signal-set-language="setLanguage"></iron-signals>
+
+    <oav-dialog-container id="dialogContainer"></oav-dialog-container>
+
+    <app-scrollpos-control selected="{{page}}"></app-scrollpos-control>
+
+    <app-header-layout>
+      <app-header fixed="" effects="waterfall">
+        <div class="layout horizontal center-center">
+          <h1>[[localize(page)]]</h1>
+        </div>
+      </app-header>
+      <div>
+        <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
+          <div name="boot" class="bootscreen layout horizontal center-center">
+            <h1>[[localize('booting')]]</h1>
+          </div>
+          <oav-create-key-pair id="createKeyPair" name="createKeyPair"></oav-create-key-pair>
+          <oav-test-key-pair id="testKeyPair" name="testKeyPair"></oav-test-key-pair>
+          <oav-counting id="counting" name="counting" completed-areas="{{completedAreas}}" area-time-for-files="{{areaTimeForFiles}}" counting-completed="{{countingCompleted}}"></oav-counting>
+          <oav-config id="config" name="config"></oav-config>
+          <oav-ready-for-voting id="readyForVoting" name="readyForVoting"></oav-ready-for-voting>
+        </iron-pages>
+        <div class="layout horizontal center-center">
+          <oav-ajax id="bootAjax" url="/keys/boot" on-response="_bootResponse"></oav-ajax>
+          <oav-ajax id="backupAndResetAjax" method="delete" url="/keys/backup_and_reset" on-response="_backupAndResetResponse"></oav-ajax>
+        </div>
+      </div>
+    </app-header-layout>
+  </template>
+
+  <script>Polymer({is:"oav-admin-app",behaviors:[Polymer.appHelpers,Polymer.AppLocalizeBehavior],properties:{page:{type:String,reflectToAttribute:!0,observer:"_pageChanged",value:"boot"},route:{type:String,observer:"_routeChanged"},routeData:Object,subroute:Object,title:{type:String},showExit:{type:Boolean,value:!1},hideBudget:{type:Boolean,value:!0},areaName:String,budgetElement:Object,currentBallot:Object,totalBudget:Number,haveSetLanguage:{type:Boolean,value:!1},completedAreas:{type:Array,value:null},areaTimeForFiles:{type:String},countingCompleted:{type:Boolean,value:!1}},listeners:{"app-resources-loaded":"_translationLoaded","oav-set-title":"_setTitle","oav-error":"_errorHandler","oav-set-area":"_setArea","oav-reboot":"_boot"},observers:["_routePageChanged(routeData.page)"],_backupAndResetResponse:function(e,t){t.response.ok?this._boot():this.$.backupAndResetAjax.showErrorDialog(this.localize("fatalBackupAndResetError"))},_bootResponse:function(e,t){var o=t.response;if("unexpected"==o.boot_state){Polymer.dom(document).querySelector("oav-admin-app").getDialog("unexpectedStateDialog").showDialog(o,this._backupAndReset.bind(this))}else"createKeyPair"==o.boot_state?this.set("page","createKeyPair"):"config"==o.boot_state?this.set("page","readyForVoting"):"counting"==o.boot_state&&(o.counting_progress&&(this.$.counting.countInProgress=!0,this.$.counting._triggerCountingProgress()),this.set("page","counting"))},_backupAndReset:function(){Polymer.dom(document).querySelector("oav-admin-app").getDialog("confirmationDialog").open(this.localize("areYouSureYouWantToBackupAndReset"),this._reallyBackupAndReset.bind(this),this._boot.bind(this))},_reallyBackupAndReset:function(){this.$.backupAndResetAjax.generateRequest()},ready:function(){this.async(function(){this._boot()},200)},_boot:function(){this.$.bootAjax.generateRequest()},_loadTestingMode:function(){return 1==LOAD_TESTING_MODE},_help:function(){this.getDialog("page").open()},_setArea:function(e,t){this.set("areaName",t.areaName),this.set("totalBudget",t.totalBudget)},_errorHandler:function(e,t){Polymer.dom(document).querySelector("oav-admin-app").getDialog("errorDialog").showErrorDialog(t)},_exit:function(){"post"==this.page&&window.appLastArea?(window.location=window.appLastArea,window.appLastArea=null):window.location="/#/"},_setTitle:function(e,t){this.set("title",t)},attached:function(){this.loadLanguage(this.resolveUrl("locales.json"))},_translationLoaded:function(){this.async(function(){this.haveSetLanguage=!0},25)},_routeChanged:function(e){""==e.path&&this.set("page","select-voting-area")},_routePageChanged:function(e){this.page=e||"select-voting-area"},getDialog:function(e){return this.$$("#dialogContainer").getDialog(e)},_pageChanged:function(e,t){}});</script>
+
+</dom-module>
+</body></html>

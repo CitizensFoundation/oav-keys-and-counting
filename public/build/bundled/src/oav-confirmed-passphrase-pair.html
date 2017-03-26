@@ -1,0 +1,129 @@
+<html><head><link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer-ts/polymer-ts.html">
+<link rel="import" href="../bower_components/paper-map-info/paper-map-info.html">
+
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../bower_components/app-localize-behavior/app-localize-behavior.html">
+
+<link rel="import" href="oav-behaviors/app-helpers.html">
+<link rel="import" href="oav-key-passphrase-input.html">
+
+</head><body><dom-module id="oav-confirmed-passphrase-pair">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      .createKeyPairContainer {
+        background-color: #f0f0f0;
+        width: 600px;
+      }
+
+      .passphrases {
+        margin: 16px;
+        padding: 16px;
+      }
+
+      .passphraseMaterial {
+        padding: 16px;
+        margin: 16px;
+        margin-top: 8px;
+        padding-top: 4px;
+        background-color: #fff;
+      }
+
+      .passphraseMaterialConfirmed {
+        background-color: #E1FFD6;
+      }
+
+      .passphrase {
+        width: 250px;
+        padding: 8px;
+        margin: 8px;
+      }
+
+      .header {
+        font-size: 26px;
+      }
+
+      .allowedCharsInfo {
+        padding-top: 16px;
+        font-size: 24px;
+      }
+
+      .allowedCharsInfoExample {
+        font-size: 22px;
+      }
+
+      .partHeader {
+        font-size: 22px;
+        padding-top: 8px;
+        width: 100%;
+      }
+      .faceIcon {
+        width: 42px;
+        height: 42px;
+      }
+
+      .checkIcon {
+        color: #0A0;
+        width: 42px;
+        height: 42px;
+      }
+
+      .titleText {
+        padding-left: 12px;
+        padding-top: 4px;
+        font-size: 22px;
+      }
+    </style>
+
+    <div class="layout vertical center-center">
+      <div class="layout vertical center-center createKeyPairContainer">
+
+        <div hidden$="[[hideCharacterHelp]]" class="layout vertical center-center">
+          <div class="allowedCharsInfo">
+            {{localize('allowedPassphraseCharacters')}}
+          </div>
+
+          <div class="allowedCharsInfoExample">
+            {{localize('allowedPassphraseCharactersExample')}}
+          </div>
+        </div>
+        <div class="partHeader self-start layout horizontal">
+          <iron-icon icon="face" class="faceIcon"></iron-icon>
+          <div class="titleText">{{localize('firstPartOfPassphrase')}}</div>
+          <div class="flex"></div>
+          <iron-icon icon="check" class="checkIcon" hidden$="[[!firstPartValidated]]"></iron-icon>
+        </div>
+        <paper-material id="firstPartMaterial" class="layout horizontal passphrases passphraseMaterial">
+          <div class="layout vertical passphrase">
+            <oav-key-passphrase-input id="firstPartOfPassphrase" min-length$="[[minimumPassphraseLength]]" label$="{{localize('firstPartOfPassphrase')}}" password="[[firstPartOfPassphrase]]" lower-case-password="{{firstPartOfPassphrase}}"></oav-key-passphrase-input>
+          </div>
+          <div class="layout vertical passphrase">
+            <oav-key-passphrase-input id="firstPartOfConfirmation" min-length$="[[minimumPassphraseLength]]" label$="{{localize('confirmPassphrase')}}" password="[[firstPartOfConfirmation]]" lower-case-password="{{firstPartOfConfirmation}}"></oav-key-passphrase-input>
+          </div>
+        </paper-material>
+        <div class="partHeader self-start layout horizontal">
+          <iron-icon icon="face" class="faceIcon"></iron-icon>
+          <div class="titleText">{{localize('secondPartOfPassphrase')}}</div>
+          <div class="flex"></div>
+          <iron-icon icon="check" class="checkIcon" hidden$="[[!secondPartValidated]]"></iron-icon>
+        </div>
+        <paper-material id="secondPartMaterial" class="layout horizontal passphraseMaterial">
+          <div class="layout vertical passphrase">
+            <oav-key-passphrase-input id="secondPartOfPassphrase" min-length$="[[minimumPassphraseLength]]" label$="{{localize('secondPartOfPassphrase')}}" password="[[secondPartOfPassphrase]]" lower-case-password="{{secondPartOfPassphrase}}"></oav-key-passphrase-input>
+          </div>
+          <div class="layout vertical passphrase">
+            <oav-key-passphrase-input id="secondPartOfConfirmation" min-length$="[[minimumPassphraseLength]]" label$="{{localize('confirmPassphrase')}}" password="[[secondPartOfConfirmation]]" lower-case-password="{{secondPartOfConfirmation}}"></oav-key-passphrase-input>
+          </div>
+        </paper-material>
+      </div>
+    </div>
+  </template>
+
+  <script>Polymer({is:"oav-confirmed-passphrase-pair",behaviors:[Polymer.appHelpers,Polymer.AppLocalizeBehavior],properties:{minimumPassphraseLength:{type:Number,value:8,notify:!0},firstPartOfPassphrase:{type:String,value:"12345678",notify:!0},secondPartOfPassphrase:{type:String,value:"12345678",notify:!0},firstPartOfConfirmation:{type:String,value:"12345678"},secondPartOfConfirmation:{type:String,value:"12345678"},firstPartValidatedComputed:{type:Boolean,computed:"_firstPartValidated(firstPartOfPassphrase, firstPartOfConfirmation)"},secondPartValidatedComputed:{type:Boolean,computed:"_secondPartValidated(secondPartOfPassphrase, secondPartOfConfirmation)"},firstPartValidated:{type:Boolean,value:!1},secondPartValidated:{type:Boolean,value:!1},allPassphrasesValidated:{type:Boolean,value:!1,notify:!0,computed:"_allPassphrasesValidated(firstPartValidated, secondPartValidated)"},showCheckIcon:{type:Boolean,value:!1},hideCharacterHelp:{type:Boolean,value:!1}},ready:function(){},_firstPartValidated:function(a,s){a&&s&&a==s&&this.$.firstPartOfPassphrase.validate()&&this.$.firstPartOfConfirmation.validate()?(this.$.firstPartMaterial.toggleClass("passphraseMaterialConfirmed",!0),this.set("firstPartValidated",!0)):(this.$.firstPartMaterial.toggleClass("passphraseMaterialConfirmed",!1),this.set("firstPartValidated",!1))},_secondPartValidated:function(a,s){a&&s&&a==s&&this.$.secondPartOfPassphrase.validate()&&this.$.secondPartOfConfirmation.validate()?(this.$.secondPartMaterial.toggleClass("passphraseMaterialConfirmed",!0),this.set("secondPartValidated",!0)):(this.$.secondPartMaterial.toggleClass("passphraseMaterialConfirmed",!1),this.set("secondPartValidated",!1))},_allPassphrasesValidated:function(a,s){return console.log("_allPassphrasesValidated"),!(!a||!s||(console.log("Validated"),0))},listeners:{"oav-non-ascii-in-password":"_noNonAsciiInPassphrases"},_noNonAsciiInPassphrases:function(){this.$.createCertPairAjax.showErrorDialog(this.localize("noNonAsciiInPassphrases"))},_validatePassphrase:function(a){return a&&a.length>=this.minimumPassphraseLength},_passphraseValidated:function(){return this._validatePassphrase(this.firstPartOfPassphrase)&&this._validatePassphrase(this.secondPartOfPassphrase)},attached:function(){this.loadLanguage(this.resolveUrl("locales.json"))},_createKeyPar:function(){this._passphraseValidated()?(this.$.createCertPairAjax.body={passphrase:this.firstPartOfPassphrase+this.secondPartOfPassphrase},this.$.createCertPairAjax.generateRequest()):this.fire("oav-passphrase-not-validated")},_createdKeyPairResponse:function(a,s){}});</script>
+</dom-module></body></html>

@@ -94,45 +94,12 @@ function writeUnbundledOutput(stream) {
 // service worker for that bundle.
 // If this argument is omitted it will create service workers for both bundled
 // and unbundled output
-function serviceWorker() {
-  const bundleType = global.config.build.bundleType;
-  let workers = [];
-
-  if (bundleType === 'both' || bundleType === 'bundled') {
-    workers.push(writeBundledServiceWorker());
-  }
-  if (bundleType === 'both' || bundleType === 'unbundled') {
-    workers.push(writeUnbundledServiceWorker());
-  }
-
-  return Promise.all(workers);
-}
 
 // Returns a Promise to generate a service worker for bundled output
-function writeBundledServiceWorker() {
-  return polymer.addServiceWorker({
-    project: project,
-    buildRoot: bundledPath,
-    swConfig: global.config.swPrecacheConfig,
-    serviceWorkerPath: global.config.serviceWorkerPath,
-    bundled: true
-  });
-}
-
-// Returns a Promise to generate a service worker for unbundled output
-function writeUnbundledServiceWorker() {
-  return polymer.addServiceWorker({
-    project: project,
-    buildRoot: unbundledPath,
-    swConfig: global.config.swPrecacheConfig,
-    serviceWorkerPath: global.config.serviceWorkerPath
-  });
-}
 
 module.exports = {
   splitSource: splitSource,
   splitDependencies: splitDependencies,
   rejoin: rejoin,
-  merge: merge,
-  serviceWorker: serviceWorker
+  merge: merge
 };

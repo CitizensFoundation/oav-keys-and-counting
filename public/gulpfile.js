@@ -34,13 +34,6 @@ global.config = {
     // server push). Using the 'both' option will create two output projects,
     // one for bundled and one for unbundled
     bundleType: 'bundled'
-  },
-  // Path to your service worker, relative to the build root directory
-  serviceWorkerPath: 'service-worker.js',
-  // Service Worker precache options based on
-  // https://github.com/GoogleChrome/sw-precache#options-parameter
-  swPrecacheConfig: {
-    navigateFallback: '/index_yp.html'
   }
 };
 
@@ -83,21 +76,11 @@ gulp.task('versionHtmlImports', function(done) {
   done();
 });
 
-gulp.task('versionHtmlImportsServiceWorker', function(done) {
-  // do stuff
-  gulp.src('build/bundled/service-worker.js', {base: './'})
-    .pipe(versionHtmlImports())
-    .pipe(gulp.dest('./',  {overwrite: true}));
-  done();
-});
-
 // Clean the build directory, split all source and dependency files into streams
 // and process them, and output bundled and unbundled versions of the project
 // with their own service workers
 gulp.task('default', gulp.series([
   clean.build,
   project.merge(source, dependencies),
-  project.serviceWorker,
-  'versionHtmlImports',
-  'versionHtmlImportsServiceWorker'
+  'versionHtmlImports'
 ]));
