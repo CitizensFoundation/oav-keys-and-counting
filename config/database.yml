@@ -5,15 +5,10 @@ production:
   reconnect: true
   database: oav_production
   pool: 5
-  host: <%= ENV['APP_DB_HOST'] %>
-  port: <%= ENV['APP_DB_PORT'] || "3306" %>
-  database: <%= ENV['APP_DB_DATABASE'] %>
-  username: <%= ENV['APP_DB_USERNAME'] %>
-  password: <%= ENV['APP_DB_PASSWORD'] %>
-  rsk_soap_username: <%= ENV['SOAP_USERNAME'] %>
-  rsk_soap_password: <%= ENV['SOAP_PASSWORD'] %>
-  rsk_url: https://www.island.is/audkenning?id=ktest.betrireykjavik.is
-  rr_url: https://rafraen.reykjavik.is/pages/betrireykjavikaudkenning?return_url=ktest.betrireykjavik.is
+  host: localhost
+  port: 3306
+  username: root
+  password:
 
 development: 
   adapter: mysql2
@@ -23,11 +18,7 @@ development:
   database: oav_development
   pool: 5
   username: root
-  password: bjahdh69
-  rsk_soap_username: 
-  rsk_soap_password:
-  rsk_url: https://www.island.is/audkenning?id=ktest.betrireykjavik.is
-  rr_url: https://rafraen.reykjavik.is/pages/betrireykjavikaudkenning?return_url=ktest.betrireykjavik.is
+  password:
 
 test:
   adapter: mysql2
@@ -37,8 +28,4 @@ test:
   database: oav_test
   pool: 5
   username: root 
-  password: bjahdh69
-  rsk_soap_username:
-  rsk_soap_password:
-  rsk_url: https://www.island.is/audkenning?id=ktest.betrireykjavik.is
-  rr_url: https://rafraen.reykjavik.is/pages/betrireykjavikaudkenning?return_url=ktest.betrireykjavik.is
+  password:
