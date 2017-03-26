@@ -3,27 +3,29 @@ production:
   encoding: utf8
   collation: utf8_general_ci
   reconnect: true
-  database: voting_production
+  database: oav_production
   pool: 5
-  username:
-  password: 
+  host: localhost
+  port: 3306
+  username: root
+  password:
 
-development: 
+development:
   adapter: mysql2
   encoding: utf8
   collation: utf8_general_ci
   reconnect: true
-  database: voting_dev
+  database: oav_development
   pool: 5
-  username:
-  password: 
+  username: root
+  password:
 
 test:
   adapter: mysql2
   encoding: utf8
   collation: utf8_general_ci
   reconnect: true
-  database: voting_test
+  database: oav_test
   pool: 5
-  username:
-  password: 
+  username: root
+  password:
