@@ -78,6 +78,7 @@ class KeysController < ApplicationController
 
     boot_state = "unexpected"
     exception = nil
+    public_key_exists = false
 
     begin
       vote_table_exists = ActiveRecord::Base.connection.table_exists? 'votes'
@@ -85,7 +86,7 @@ class KeysController < ApplicationController
 
       vote_count = (vote_table_exists and Vote.count) ? Vote.count : -1
       private_key_exists = File.exists?(PRIVATE_KEY_PATH)
-      public_key_exists = (config_table_exists and BudgetConfig.first and BudgetConfig.first.public_key) != nil
+      public_key_exists = (config_table_exists and BudgetConfig.first and BudgetConfig.first.public_key)
       public_key_file_exists = File.exists?(PUBLIC_KEY_PATH)
       if vote_count>0 and private_key_exists and public_key_exists
         boot_state = "counting"
