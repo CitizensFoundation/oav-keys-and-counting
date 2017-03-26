@@ -92,7 +92,7 @@ class KeysController < ApplicationController
         boot_state = "counting"
       elsif config_table_exists and vote_table_exists and private_key_exists and public_key_exists
         boot_state = "config"
-      elsif vote_count<1 and !private_key_exists and !public_key_exists
+      elsif vote_count<1 and !private_key_exists and !public_key_exists and vote_table_exists and config_table_exists
         boot_state = "createKeyPair"
       end
     rescue Exception => e

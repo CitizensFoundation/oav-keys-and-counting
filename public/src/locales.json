@@ -34,7 +34,7 @@
     "confirm": "confirm",
     "areYouSureYouWantToBackupAndReset": "Are you sure you want to backup and reset?",
     "cancel": "Cancel",
-    "unexpectedBootState": "Unexpected boot state!",
+    "unexpectedBootState": "Initial or unexpected boot state!",
     "backupDestroyAndReset": "Backup & Reset",
     "booting":"Booting the admin app",
     "moreInformation": "More information",
