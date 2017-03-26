@@ -1,4 +1,8 @@
 {
   "entrypoint": "index.html",
-  "shell": "src/oav-counting-app.html"
+  "shell": "src/oav-counting-app.html",
+  "includeDependencies": [
+    "manifest.json",
+    "bower_components/webcomponentsjs/webcomponents-lite.min.js"
+  ]
 }

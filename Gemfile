@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 ruby '2.2.5'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.7'
+gem 'rails', '4.2.8'
 gem 'sidekiq'
 
 # Use sqlite3 as the database for Active Record
@@ -34,7 +34,7 @@ gem 'mysql2' # The Mysql Driver
 gem 'dalli' # Memcache driver
 gem 'nokogiri','1.6.8' # XML/HTML Parsing library
 gem 'psych'
-gem 'soap4r', :path =>"lib/soap4r" # git => 'https://github.com/rbjarnason/soap4r.git'
+#gem 'soap4r', :path =>"lib/soap4r" # git => 'https://github.com/rbjarnason/soap4r.git'
 gem 'ruby-saml', :path => "lib/ruby-saml" # :git => 'https://github.com/rbjarnason/ruby-saml.git', :ref=>"63ce604db2e562eeb25467e7e1655d16bab7d9cb"
 gem 'memcachier'
 gem "passenger"
