@@ -78,32 +78,37 @@ class KeysController < ApplicationController
 
     boot_state = "unexpected"
     exception = nil
-    public_key_exists = false
+    public_key = nil
 
     begin
       vote_table_exists = ActiveRecord::Base.connection.table_exists? 'votes'
       config_table_exists = ActiveRecord::Base.connection.table_exists? 'config'
+      has_tested_key_pair = File.exists?(KEY_PAIR_HAS_BEEN_TESTED_FILE)
 
       vote_count = (vote_table_exists and Vote.count) ? Vote.count : -1
       private_key_exists = File.exists?(PRIVATE_KEY_PATH)
-      public_key_exists = (config_table_exists and BudgetConfig.first and BudgetConfig.first.public_key)
+      public_key = (config_table_exists and BudgetConfig.first and BudgetConfig.first.public_key)
       public_key_file_exists = File.exists?(PUBLIC_KEY_PATH)
-      if vote_count>0 and private_key_exists and public_key_exists
+      if vote_count>0 and private_key_exists and public_key
         boot_state = "counting"
-      elsif config_table_exists and vote_table_exists and private_key_exists and public_key_exists
+      elsif config_table_exists and vote_table_exists and private_key_exists and public_key and has_tested_key_pair
         boot_state = "config"
-      elsif vote_count<1 and !private_key_exists and !public_key_exists and vote_table_exists and config_table_exists
+      elsif config_table_exists and vote_table_exists and private_key_exists and public_key
+        boot_state = "testKeyPair"
+      elsif vote_count<1 and !private_key_exists and !public_key and vote_table_exists and config_table_exists
         boot_state = "createKeyPair"
       end
     rescue Exception => e
       exception = "#{e}"
     end
 
+    puts boot_state
+
     respond_to do |format|
       format.json { render :json => {:boot_state => boot_state,
                                      :vote_count => vote_count,
                                      :private_key_exists => private_key_exists,
-                                     :public_key_exists => public_key_exists,
+                                     :public_key => public_key,
                                      :public_key_file_exists => public_key_file_exists,
                                      :exception => exception,
                                      :counting_progress => (config_table_exists && BudgetConfig.first) ? BudgetConfig.first.counting_progress : nil }
@@ -191,11 +196,27 @@ class KeysController < ApplicationController
     end
   end
 
+  def test_key_pair
+    vote = Vote.new
+    vote.payload_data = params[:text_to_decrypt]
+    passphrase_error = false
+    decrypted_text = nil
+    begin
+      helper = BudgetVoteHelper.new(vote.payload_data, PRIVATE_KEY_PATH, params[:passphrase], vote)
+      decrypted_text = helper.unpack_text_only_for_testing
+    rescue OpenSSL::PKey::RSAError => e
+      passphrase_error = true
+    end
+
+    unless passphrase_error
+      File.open(KEY_PAIR_HAS_BEEN_TESTED_FILE, "wb") { |f| f.write("Test OK") }
+    end
+    respond_to do |format|
+      format.json { render :json => {:decrypted_text => decrypted_text, passphrase_error: passphrase_error} }
+    end
+  end
+
   private
 
-  def test_key_pair
-    # Show back to user both encrypted and unecrypted
-    # Dulkóðunarpartur kosningar tilbúin
-  end
 
 end

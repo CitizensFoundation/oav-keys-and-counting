@@ -1,5 +1,13 @@
 {
   "en": {
+    "passphraseError": "Wrong Passphrase",
+    "textToEncrypt": "Text to encrypt",
+    "decryptedText": "Decrypted text",
+    "encryptedText": "Encrypted text",
+    "clearAllVotes": "Clear All Votes",
+    "continue": "Continue",
+    "testTheKeyPair": "Test The Key Pair",
+    "testKeyPair": "Test Key Pair",
     "uploadNewDatabase": "Upload New Database",
     "votesCount": "Votes count",
     "countedVotesCount": "Counted votes count",

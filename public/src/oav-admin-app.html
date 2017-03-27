@@ -47,6 +47,7 @@
 <link rel="import" href="oav-create-key-pair.html">
 <link rel="import" href="oav-ready-for-voting.html">
 <link rel="import" href="oav-counting.html">
+<link rel="import" href="oav-test-key-pair.html">
 
 <dom-module id="oav-admin-app">
 
@@ -246,7 +247,8 @@
         'oav-set-title': '_setTitle',
         'oav-error': '_errorHandler',
         'oav-set-area': '_setArea',
-        'oav-reboot': '_boot'
+        'oav-reboot': '_boot',
+        'oav-trigger-backup-and-reset': '_backupAndReset'
       },
 
       observers: [
@@ -265,19 +267,24 @@
 
       _bootResponse: function (event, detail) {
         var response = detail.response;
-        if (response.boot_state=='unexpected') {
+        if (response.boot_state==='unexpected') {
           var dialog = Polymer.dom(document).querySelector('oav-admin-app').getDialog("unexpectedStateDialog");
           dialog.showDialog(response, this._backupAndReset.bind(this));
-        } else if (response.boot_state=="createKeyPair") {
+        } else if (response.boot_state==="createKeyPair") {
           this.set('page','createKeyPair');
-        } else if (response.boot_state=="config") {
+        } else if (response.boot_state==="config") {
           this.set('page', 'readyForVoting');
-        } else if (response.boot_state=="counting") {
+        } else if (response.boot_state==="testKeyPair") {
+          this.set('page', 'testKeyPair');
+        } else if (response.boot_state==="counting") {
           if (response.counting_progress) {
             this.$.counting.countInProgress = true;
             this.$.counting._triggerCountingProgress();
           }
           this.set('page', 'counting');
+        }
+        if (response.public_key && response.public_key!=="") {
+          this.$$("#testKeyPair").encryptTextString(response.public_key);
         }
       },
 

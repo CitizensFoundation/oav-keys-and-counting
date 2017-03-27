@@ -63,6 +63,10 @@ class BudgetVoteHelper
     #puts "@idea_ids #{@idea_ids}"
   end
 
+  def unpack_text_only_for_testing
+    Base64.decode64(@@private_key.private_decrypt(Base64.decode64(@encrypted_payload)))
+  end
+
   def unpack_without_encryption
     # Unpack the vote without decryption
     ideas = @encrypted_payload

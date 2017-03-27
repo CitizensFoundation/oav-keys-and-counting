@@ -80,6 +80,12 @@
         <div class="createButtonContainer" hidden$="[[!countingCompleted]]">
           <paper-button raised on-tap="_startRecount">{{localize('recount')}}</paper-button>
         </div>
+        <div class="createButtonContainer" hidden$="[[!countingCompleted]]">
+          <paper-button raised on-tap="_clearAllVotes">{{localize('clearAllVotes')}}</paper-button>
+        </div>
+        <div class="createButtonContainer">
+          <paper-button dialog-confirm on-tap="_backupAndReset">{{localize('backupDestroyAndReset')}}</paper-button>
+        </div>
       </div>
 
       <div class="layout horizontal center-center wrap" hidden$="[[!countingCompleted">
@@ -136,6 +142,7 @@
       <div class="layout horizontal center-center">
         <oav-ajax id="startCounting" method="POST" url="/counting/start_counting" on-response="_startCountingResponse"></oav-ajax>
         <oav-ajax id="countingProgress" method="GET" url="/counting/counting_progress" on-response="_progressReport"></oav-ajax>
+        <oav-ajax id="clearAllVotes" method="DELETE" url="/counting/clear_all_votes" on-response="_clearDone"></oav-ajax>
       </div>
     </div>
   </template>
@@ -197,8 +204,20 @@
         }
       },
 
+      _backupAndReset: function () {
+        this.fire('oav-trigger-backup-and-reset');
+      },
+
+      _clearAllVotes: function () {
+        this.$.clearAllVotes.generateRequest();
+      },
+
       _newReadyDatabase: function () {
         this.$$("#logoImageUpload").clear();
+        this.fire('oav-reboot');
+      },
+
+      _clearDone: function () {
         this.fire('oav-reboot');
       },
 

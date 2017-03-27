@@ -38,6 +38,9 @@
         <iron-icon class="icon" icon="file-upload"></iron-icon>
         <span>[[localize('uploadNewDatabase')]]</span><br>
       </file-upload>
+      <div class="createButtonContainer">
+        <paper-button dialog-confirm on-tap="_backupAndReset">{{localize('backupDestroyAndReset')}}</paper-button>
+      </div>
     </div>
   </template>
 
@@ -53,6 +56,10 @@
       _newReadyDatabase: function () {
         this.$$("#logoImageUpload").clear();
         this.fire('oav-reboot');
+      },
+
+      _backupAndReset: function () {
+        this.fire('oav-trigger-backup-and-reset');
       },
 
       attached: function() {

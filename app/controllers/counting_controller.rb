@@ -49,4 +49,11 @@ class CountingController < ApplicationController
   def download_results_file
     send_file Rails.root.join("results", params[:filename])
   end
+
+  def clear_all_votes
+    Vote.delete_all
+    respond_to do |format|
+      format.json { render :json => {:ok => true }}
+    end
+  end
 end
