@@ -200,17 +200,23 @@ class KeysController < ApplicationController
     vote = Vote.new
     vote.payload_data = params[:text_to_decrypt]
     passphrase_error = false
+    puts "PAYLOAD: #{vote.payload_data}"
     decrypted_text = nil
-    begin
+  #  begin
       helper = BudgetVoteHelper.new(vote.payload_data, PRIVATE_KEY_PATH, params[:passphrase], vote)
       decrypted_text = helper.unpack_text_only_for_testing
-    rescue OpenSSL::PKey::RSAError => e
-      passphrase_error = true
-    end
+  #  rescue OpenSSL::PKey::RSAError => e
+  #    passphrase_error = true
+  #  end
 
     unless passphrase_error
       File.open(KEY_PAIR_HAS_BEEN_TESTED_FILE, "wb") { |f| f.write("Test OK") }
     end
+
+    puts "INFO"
+    puts decrypted_text
+    puts passphrase_error
+    puts "END INFO"
     respond_to do |format|
       format.json { render :json => {:decrypted_text => decrypted_text, passphrase_error: passphrase_error} }
     end

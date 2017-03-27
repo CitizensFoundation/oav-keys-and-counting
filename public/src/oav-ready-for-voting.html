@@ -3,7 +3,7 @@
 <link rel="import" href="../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 
-<link rel="import" href="../bower_components/file-upload/file-upload.html">
+<link rel="import" href="file-upload/file-upload.html">
 
 <link rel="import" href="oav-behaviors/app-helpers.html">
 
@@ -16,31 +16,49 @@
       }
 
       paper-button {
-        background-color: #FFF;
+        background-color: var(--app-accent-color);
+        color: #FFF;
         padding: 16px;
         margin: 16px;
+      }
+
+      paper-button.light {
+        background-color: var(--app-accent-color-light);
       }
 
       a {
         text-decoration: none;
         color: #000;
       }
+
+      paper-material {
+        background-color: #FFF;
+        padding: 16px;
+        margin: 16px;
+      }
+
+      .headerContainer {
+        width: 600px;
+        border-bottom: solid 2px;
+        border-color: #444;
+        font-size: 28px;
+        color: #222;
+        text-align: center;
+        margin-top: 0px;
+        margin-bottom: 32px;
+      }
     </style>
 
     <div class="layout vertical center-center buttonContainer">
-      <a href="/keys/download_private_key_backup"><paper-button raised>{{localize('downloadPrivateKeyBackup')}}</paper-button></a>
-      <a href="/keys/download_public_key_backup"><paper-button raised>{{localize('downloadPublicKeyBackup')}}</paper-button></a>
-      <a href="/keys/download_voting_database"><paper-button raised>{{localize('downloadVotingDatabase')}}</paper-button></a>
+      <div class="headerContainer">
+        {{localize('readyForVoting')}}
+      </div>
+        <a href="/keys/download_private_key_backup"><paper-button raised>{{localize('downloadPrivateKeyBackup')}}</paper-button></a>
+        <a href="/keys/download_voting_database"><paper-button raised>{{localize('downloadVotingDatabase')}}</paper-button></a>
     </div>
 
     <div class="layout vertical center-center">
-      <file-upload id="logoImageUpload" raised="true" multi="false" target="/keys/restore_sql" method="POST" on-success="_newReadyDatabase">
-        <iron-icon class="icon" icon="file-upload"></iron-icon>
-        <span>[[localize('uploadNewDatabase')]]</span><br>
-      </file-upload>
-      <div class="createButtonContainer">
-        <paper-button dialog-confirm on-tap="_backupAndReset">{{localize('backupDestroyAndReset')}}</paper-button>
-      </div>
+
     </div>
   </template>
 
@@ -53,10 +71,6 @@
         Polymer.AppLocalizeBehavior
       ],
 
-      _newReadyDatabase: function () {
-        this.$$("#logoImageUpload").clear();
-        this.fire('oav-reboot');
-      },
 
       _backupAndReset: function () {
         this.fire('oav-trigger-backup-and-reset');

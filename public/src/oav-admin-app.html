@@ -31,6 +31,7 @@
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../bower_components/iron-signals/iron-signals.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
@@ -48,6 +49,7 @@
 <link rel="import" href="oav-ready-for-voting.html">
 <link rel="import" href="oav-counting.html">
 <link rel="import" href="oav-test-key-pair.html">
+<link rel="import" href="file-upload/file-upload.html">
 
 <dom-module id="oav-admin-app">
 
@@ -57,15 +59,14 @@
 
       :host {
         display: block;
-        --app-primary-color: #006C32;
+        --app-primary-color: var(--paper-orange-900);
         --app-secondary-color: black;
         --app-main-backround-color: #e0e0e0;
         --app-accent-color: var(--paper-orange-a700);
-        --app-accent-color-light: var(--paper-orange-a200);
+        --app-accent-color-light: var(--paper-orange-a400);
         --app-kopavogur-green-grass: #e0e0e0;
-
         --paper-tabs-selection-bar-color: var(--app-accent-color);
-
+        --paper-input-container-focus-color: var(--app-accent-color);
       }
 
       app-header {
@@ -136,6 +137,38 @@
         right: 0;
         color: #777;
       }
+
+      .lightButton {
+        background-color: var(--app-accent-color-light);
+        margin: 32px;
+        margin-left: 0;
+      }
+
+      .icon {
+        padding-right: 8px;
+      }
+
+      .oavHeader {
+        font-size: 26px;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+
+      .oavSubHeader {
+        font-size: 22px;
+        color: #DDD;
+        margin-top: 0;
+        padding-top: 0;
+      }
+
+      .titleHeader {
+        margin: 16px;
+      }
+
+      iron-image {
+        margin-top: 16px;
+        margin-left: 16px;
+      }
     </style>
 
     <iron-signals on-iron-signal-set-language="setLanguage"></iron-signals>
@@ -146,9 +179,23 @@
 
     <app-header-layout>
       <app-header fixed effects="waterfall">
-        <div class="layout horizontal center-center">
-          <h1>[[localize(page)]]</h1>
-        </div>
+          <div class="layout horizontal">
+            <iron-image src="/citizens-logo.png"></iron-image>
+            <div class="layout vertical titleHeader">
+              <div class="oavHeader">Open Active Voting</div>
+              <div class="oavSubHeader">Keys & Counting App 1.0</div>
+            </div>
+
+            <div class="flex"></div>
+            <file-upload class="lightButton" id="logoImageUpload" raised="true" multi="false" target="/keys/restore_sql" method="POST" on-success="_newReadyDatabase">
+              <iron-icon class="icon" icon="file-upload"></iron-icon>
+              <span>[[localize('uploadNewDatabase')]]</span><br>
+            </file-upload>
+            <paper-button raised class="lightButton" dialog-confirm on-tap="_backupAndReset">
+               <iron-icon class="icon" icon="settings-backup-restore"></iron-icon>
+              {{localize('backupDestroyAndReset')}}
+            </paper-button>
+          </div>
       </app-header>
       <div>
         <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
@@ -254,6 +301,11 @@
       observers: [
         '_routePageChanged(routeData.page)'
       ],
+
+      _newReadyDatabase: function () {
+        this.$$("#logoImageUpload").clear();
+        this.fire('oav-reboot');
+      },
 
       _backupAndResetResponse: function (event, detail) {
         var dialog = Polymer.dom(document).querySelector('oav-admin-app').getDialog("unexpectedStateDialog");
