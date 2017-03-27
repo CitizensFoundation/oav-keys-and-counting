@@ -41,9 +41,9 @@ namespace :db do
   end
 
   desc "Restores the database from default location"
-  task :restore => :environment do
+  task :restore_sql => :environment do
     cmd = nil
-    filePath = "#{Rails.root}/Import/sql/current.sql"
+    filePath = "#{Rails.root}/Backups/sql/latest_for_import.sql"
     with_config do |app, host, db, user, password|
       hostText = host ? "--host="+host : ""
       cmd = "mysql -u #{user} #{hostText} --password=#{password} #{db} < #{filePath}"

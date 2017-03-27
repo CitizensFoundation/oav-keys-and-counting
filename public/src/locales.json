@@ -1,5 +1,6 @@
 {
   "en": {
+    "uploadNewDatabase": "Upload New Database",
     "votesCount": "Votes count",
     "countedVotesCount": "Counted votes count",
     "invalidVotesCount": "Invalid votes count",

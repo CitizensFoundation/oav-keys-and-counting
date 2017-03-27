@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   get "keys/boot"
   delete "keys/backup_and_reset"
   post "keys/create_public_private_key_pair"
+  post "keys/restore_sql"
   get "keys/download_public_key_backup"
   get "keys/download_private_key_backup"
   get "keys/download_voting_database"

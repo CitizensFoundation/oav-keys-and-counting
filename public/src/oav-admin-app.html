@@ -291,6 +291,7 @@
       },
 
       ready: function () {
+        window.mainApp = this;
         this.async(function () {
           this._boot();
         }, 200);

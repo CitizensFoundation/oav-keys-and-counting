@@ -38,7 +38,8 @@
     "paper-card": "polymerelements/paper-card#1.1.2",
     "google-streetview-pano": "https://github.com/rbjarnason/google-streetview-pano.git#timings-fix-maps-api-callback",
     "lodash": "*",
-    "app-layout": "^0.10.7"
+    "app-layout": "^0.10.7",
+    "file-upload": "rbjarnason/file-upload#master"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"

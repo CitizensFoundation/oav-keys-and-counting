@@ -1,6 +1,9 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../bower_components/file-upload/file-upload.html">
 
 <link rel="import" href="oav-behaviors/app-helpers.html">
 
@@ -29,6 +32,13 @@
       <a href="/keys/download_public_key_backup"><paper-button raised>{{localize('downloadPublicKeyBackup')}}</paper-button></a>
       <a href="/keys/download_voting_database"><paper-button raised>{{localize('downloadVotingDatabase')}}</paper-button></a>
     </div>
+
+    <div class="layout vertical center-center">
+      <file-upload id="logoImageUpload" raised="true" multi="false" target="/keys/restore_sql" method="POST" on-success="_newReadyDatabase">
+        <iron-icon class="icon" icon="file-upload"></iron-icon>
+        <span>[[localize('uploadNewDatabase')]]</span><br>
+      </file-upload>
+    </div>
   </template>
 
   <script>
@@ -39,6 +49,11 @@
         Polymer.appHelpers,
         Polymer.AppLocalizeBehavior
       ],
+
+      _newReadyDatabase: function () {
+        this.$$("#logoImageUpload").clear();
+        this.fire('oav-reboot');
+      },
 
       attached: function() {
         this.loadLanguage(this.resolveUrl('locales.json'));

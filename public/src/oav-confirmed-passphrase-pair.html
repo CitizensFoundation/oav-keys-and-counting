@@ -267,7 +267,7 @@
       },
 
       _noNonAsciiInPassphrases: function () {
-        this.$.createCertPairAjax.showErrorDialog(this.localize('noNonAsciiInPassphrases'))
+        this.fire('oav-error', this.localize('noNonAsciiInPassphrases'));
       },
 
       _validatePassphrase: function (password) {

@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../oav-behaviors/app-helpers.html">
+<link rel="import" href="../../bower_components/file-upload/file-upload.html">
 
 <dom-module id="oav-unexpected-state-dialog">
   <style>
@@ -54,6 +55,13 @@
         </div>
       </div>
 
+      <div class="layout vertical center-center">
+        <file-upload id="logoImageUpload" raised="true" multi="false" target="/keys/restore_sql" method="POST" on-success="_newReadyDatabase">
+          <iron-icon class="icon" icon="file-upload"></iron-icon>
+          <span>[[localize('uploadNewDatabase')]]</span><br>
+        </file-upload>
+      </div>
+
       <div class="buttons">
         <paper-button dialog-confirm on-tap="_backupAndReset">{{localize('backupDestroyAndReset')}}</paper-button>
       </div>
@@ -93,6 +101,11 @@
         },
 
         callbackFunction: Function
+      },
+
+      _newReadyDatabase: function () {
+        this.close();
+        window.mainApp._boot();
       },
 
       _responseChanged: function (response) {

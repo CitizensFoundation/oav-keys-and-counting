@@ -10,6 +10,7 @@
 <link rel="import" href="../bower_components/iron-signals/iron-signals.html">
 <link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../bower_components/file-upload/file-upload.html">
 
 <link rel="import" href="oav-behaviors/app-helpers.html">
 <link rel="import" href="oav-confirmed-passphrase-pair.html">
@@ -125,6 +126,13 @@
         </template>
       </div>
 
+      <div class="layout vertical center-center">
+        <file-upload id="logoImageUpload" raised="true" multi="false" target="/keys/restore_sql" method="POST" on-success="_newReadyDatabase">
+          <iron-icon class="icon" icon="file-upload"></iron-icon>
+          <span>[[localize('uploadNewDatabase')]]</span><br>
+        </file-upload>
+      </div>
+
       <div class="layout horizontal center-center">
         <oav-ajax id="startCounting" method="POST" url="/counting/start_counting" on-response="_startCountingResponse"></oav-ajax>
         <oav-ajax id="countingProgress" method="GET" url="/counting/counting_progress" on-response="_progressReport"></oav-ajax>
@@ -189,6 +197,11 @@
         }
       },
 
+      _newReadyDatabase: function () {
+        this.$$("#logoImageUpload").clear();
+        this.fire('oav-reboot');
+      },
+
       _validatePassphrase: function (password) {
         return (password && password.length>=this.minimumPassphraseLength);
       },
@@ -239,8 +252,12 @@
       },
 
       _startRecount: function () {
-        this._startCounting(true);
-        this.set('progressMessage', "");
+        this.set('firstPartOfPassphrase', "");
+        this.set('secondPartOfPassphrase', "");
+        this.set('allPassphrasesValidated', false);
+        this.set('needPassphrase', true);
+        this.set('countingCompleted', false);
+        this.set('completedAreas', null);
       },
 
       _startCounting: function (recount) {

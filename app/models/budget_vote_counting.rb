@@ -165,6 +165,7 @@ class BudgetVoteCounting
 
   # Decrypt and add votes from ballot to total
   def process_vote(vote)
+    puts "USING PASSPHRASE #{@passphrase}"
     decrypted_vote = BudgetVoteHelper.new(vote.payload_data, @private_key_file, @passphrase, vote)
     add_votes(decrypted_vote.unpack)
   end

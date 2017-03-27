@@ -111,6 +111,16 @@ class KeysController < ApplicationController
     end
   end
 
+  def restore_sql
+    filePath = "#{Rails.root}/Backups/sql/latest_for_import.sql"
+    File.open(filePath, "wb") { |f| f.write(params[:file].read) }
+    system "rake db:restore_sql"
+
+    respond_to do |format|
+      format.json { render :json => {:ok => true} }
+    end
+  end
+
   def backup_and_reset
     begin
       vote_count = Vote.count
