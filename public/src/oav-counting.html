@@ -55,6 +55,14 @@
         text-align: center;
       }
 
+      .areaResultsFooter {
+        padding-bottom: 8px;
+        border-bottom: 2px solid;
+        margin-bottom: 8px;
+        width: 90%;
+        text-align: center;
+      }
+
       paper-button {
         background-color: var(--app-accent-color);
         margin: 16px;
@@ -116,23 +124,24 @@
                   [[localize('invalidVotesCount')]]: [[area.invalid_votes_count]]
                 </div>
               </div>
+              <div class="areaResultsFooter"></div>
               <div class="areaLink">
                 <a href="/counting/download_results_file?filename=[[area.areaId]]_[[areaTimeForFiles]]_voting_results.csv">
-                  <paper-button raised>
+                  <paper-button>
                     [[localize('downloadVotingResults')]]
                   </paper-button>
                 </a>
               </div>
               <div class="areaLink">
                 <a href="/counting/download_results_file?filename=[[area.areaId]]_[[areaTimeForFiles]]_counted_unencrypted_audit_report.csv">
-                  <paper-button raised>
+                  <paper-button>
                     [[localize('downloadUnencryptedVotes')]]
                   </paper-button>
                 </a>
               </div>
               <div class="areaLink">
                 <a href="/counting/download_results_file?filename=[[area.areaId]]_[[areaTimeForFiles]]_audit_report.csv">
-                  <paper-button raised>
+                  <paper-button>
                     [[localize('downloadAuditReport')]]
                   </paper-button>
                 </a>
