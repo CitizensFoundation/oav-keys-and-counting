@@ -84,15 +84,22 @@ Example:
       --paper-progress-active-color: #f40303;
     }
 
+    .containerMain {
+      background-color: var(--app-primary-color);
+    }
+
+    paper-button {
+      background-color: var(--app-accent-color-light);
+    }
+
   </style>
 
   <template>
-    <div>
+    <div class="containerMain">
       <paper-button id="button" icon="file-upload" class="blue" on-click="_fileClick">
         <content></content>
       </paper-button>
-      <div id='UploadBorder' hidden>
-        <div id="dropArea" hidden$="{{!_shownDropText}}">{{dropText}}</div>
+      <div id='UploadBorder'>
         <template is="dom-repeat" items="{{files}}">
           <div class="file">
             <div class="name">
