@@ -34,7 +34,7 @@
 
   <template>
 
-    <paper-dialog id="dialog" modal>
+    <paper-dialog id="dialog">
       <div class="bootHeader">[[localize('unexpectedBootState')]]</div>
 
       <div class="layout vertical bootState">
@@ -53,13 +53,6 @@
         <div class="bootElement">
           [[response.exception]]
         </div>
-      </div>
-
-      <div class="layout vertical center-center">
-        <file-upload id="logoImageUpload" raised="true" multi="false" target="/keys/restore_sql" method="POST" on-success="_newReadyDatabase">
-          <iron-icon class="icon" icon="file-upload"></iron-icon>
-          <span>[[localize('uploadNewDatabase')]]</span><br>
-        </file-upload>
       </div>
 
       <div class="buttons">
