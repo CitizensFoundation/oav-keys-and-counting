@@ -118,7 +118,7 @@ class KeysController < ApplicationController
 
   def restore_sql
     filePath = "#{Rails.root}/Backups/sql/latest_for_import.sql"
-    FileUtils.mkdir_p(filePath)
+    FileUtils.mkdir_p("#{Rails.root}/Backups/sql")
     File.open(filePath, "wb") { |f| f.write(params[:file].read) }
     system "rake db:restore_sql"
 
