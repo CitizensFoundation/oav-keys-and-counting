@@ -343,7 +343,7 @@
 
       _backupAndReset: function () {
         var dialog = Polymer.dom(document).querySelector('oav-admin-app').getDialog("confirmationDialog");
-        dialog.open(this.localize('areYouSureYouWantToBackupAndReset'), this._reallyBackupAndReset.bind(this), this._boot.bind(this));
+        dialog.open(this.localize('areYouSureYouWantToBackupAndReset'), this._reallyBackupAndReset.bind(this));
       },
 
       _reallyBackupAndReset: function () {

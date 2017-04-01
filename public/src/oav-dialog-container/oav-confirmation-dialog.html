@@ -66,16 +66,11 @@
         _reset: function () {
           this.set('confirmationText', null);
           this.set('onConfirmedFunction', null);
-          if (this.onCancelFunction) {
-            this.onCancelFunction();
-            this.set('onCancelFunction', null);
-          }
         },
 
-        open: function (confirmationText, onConfirmedFunction, onCancelFunction) {
+        open: function (confirmationText, onConfirmedFunction) {
           this.set('confirmationText', confirmationText);
           this.set('onConfirmedFunction', onConfirmedFunction);
-          this.set('onCancelFunction', onCancelFunction);
           this.$$("#confirmationDialog").open();
         },
 
