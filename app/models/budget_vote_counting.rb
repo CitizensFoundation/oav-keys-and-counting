@@ -217,9 +217,13 @@ class BudgetVoteCounting
       write_voting_totals(csv)
       csv << [""]
       csv << ["Allir innsendir atkvæðaseðlar"]
-      csv << ["Hverfa ID","Dulkóðuð kennitala","Dagsetning","IP tala","Dulkóðað atkvæði"]
+      csv << ["Hverfa ID","Dulkóðuð kennitala","Dagsetning","IP tala","Dulkóðað atkvæði","User Agent"]
       Vote.where(["area_id = ?",@area_id]).order("created_at").all.each do |vote|
-        csv << [vote.area_id,vote.user_id_hash,vote.created_at,vote.client_ip_address,vote.payload_data]
+        user_agent = "n/a"
+        if defined? vote.user_agent
+          user_agent = vote._user_agent
+        end
+        csv << [vote.area_id,vote.user_id_hash,vote.created_at,vote.client_ip_address,vote.payload_data,user_agent]
       end
     end
   end
