@@ -220,6 +220,15 @@
         }
       },
 
+      reset: function () {
+        this.set('firstPartOfPassphrase', null);
+        this.set('secondPartOfPassphrase', null);
+        this.set('countInProgress', false);
+        this.set('countingCompleted', false);
+        this.set('progressMessage', null);
+        this.set('completedAreas', null);
+      },
+
       _backupAndReset: function () {
         this.fire('oav-trigger-backup-and-reset');
       },

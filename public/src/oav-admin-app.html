@@ -306,6 +306,7 @@
       _newReadyDatabase: function () {
         this.$$("#logoImageUpload").clear();
         this.fire('oav-reboot');
+        this.$$("#counting").reset();
       },
 
       _backupAndResetResponse: function (event, detail) {
