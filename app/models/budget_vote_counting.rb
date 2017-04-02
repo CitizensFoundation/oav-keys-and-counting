@@ -75,18 +75,18 @@ class BudgetVoteCounting
       filepath = Rails.env.test? ? Rails.root.join("test","results",filename) : Rails.root.join("results",filename)
     end
     CSV.open(filepath,"wb") do |csv|
-      csv << ["Niðurstöður kosninga"]
+      csv << ["Voting results"]
       csv << [""]
       write_voting_totals(csv)
       csv << [""]
-      csv << ["Valin verkefni"]
+      csv << ["Projects voted in"]
       add_items_to_csv(@item_ids_selected_count,csv)
       csv << [""]
-      csv << ["Heildaratkvæði"]
+      csv << ["Total ballots"]
       add_items_to_csv(@item_ids_count,csv)
       unless @invalid_votes.empty?
         csv << [""]
-        csv << ["Ógild atkvæði"]
+        csv << ["Invalid ballots"]
         @invalid_votes.each do |invalid_vote|
           csv << invalid_vote
         end
@@ -104,13 +104,13 @@ class BudgetVoteCounting
       csv << [""]
       write_voting_totals(csv)
       csv << [""]
-      csv << ["Allir taldir atkvæðaseðlar"]
-      csv << ["Hverfa ID","Dagsetning","Kosin verkefna IDs"]
+      csv << ["Total ballots"]
+      csv << ["Area id","Date","Voted in project ids"]
       FinalSplitVote.where(["final_split_votes.area_id = ?",@area_id]).includes(:vote).order("votes.created_at").all.each do |final_vote|
         begin
           csv << [final_vote.area_id,final_vote.vote.created_at]+BudgetVoteHelper.new(final_vote.payload_data, @private_key_file, @passphrase, final_vote).unencryped_vote_for_audit_csv
         rescue Exception => e
-          csv << [final_vote.area_id,final_vote.vote.created_at,"Ógilt atkvæði",final_vote.inspect,e.message]
+          csv << [final_vote.area_id,final_vote.vote.created_at,"Invalid ballot",final_vote.inspect,e.message]
         end
 
       end
@@ -165,7 +165,6 @@ class BudgetVoteCounting
 
   # Decrypt and add votes from ballot to total
   def process_vote(vote)
-    puts "USING PASSPHRASE #{@passphrase}"
     decrypted_vote = BudgetVoteHelper.new(vote.payload_data, @private_key_file, @passphrase, vote)
     add_votes(decrypted_vote.unpack)
   end
@@ -185,7 +184,7 @@ class BudgetVoteCounting
 
   # Add items to csv
   def add_items_to_csv(items,csv)
-    csv << ["Id","Nafn","Atkvæði","Kostnaður"]
+    csv << ["Id","Name","Ballot","Cost"]
     total_vote_count = 0
     total_price = 0
     items.sort_by{|p| [-p[1], p[0]]}.each do |item_id,vote_count|
@@ -198,10 +197,10 @@ class BudgetVoteCounting
 
   # Add totals to csv
   def write_voting_totals(csv)
-    csv << ["Hverfa ID","Nafn á hverfi","Fjármagn (m.)"]
+    csv << ["Area id","Area name","Amount"]
     csv << [@area_id,BudgetBallotItem.get_area_name(@area_id),BudgetBallotItem.get_area_budget(@area_id)]
     csv << [""]
-    csv << ["Innsendir atkvæðaseðlar","Taldir atkvæðaseðlar","Innsendir atkvæðaseðlar í þessu hverfi","Taldir atkvæðaseðlar í þessu hverfi"]
+    csv << ["Total ballots","Counted unique ballots","Total ballots in this area","Counted unique ballots in this area"]
     csv << [Vote.count,FinalSplitVote.count,Vote.where(:area_id=>@area_id).count,FinalSplitVote.where(:area_id=>@area_id).count]
     csv << [""]
   end
@@ -216,8 +215,8 @@ class BudgetVoteCounting
       csv << [""]
       write_voting_totals(csv)
       csv << [""]
-      csv << ["Allir innsendir atkvæðaseðlar"]
-      csv << ["Hverfa ID","Dulkóðuð kennitala","Dagsetning","IP tala","Dulkóðað atkvæði","User Agent"]
+      csv << ["Total ballots"]
+      csv << ["Area id","Identity","Date","IP Address","Encrypted ballot","User agent"]
       Vote.where(["area_id = ?",@area_id]).order("created_at").all.each do |vote|
         user_agent = "n/a"
         if defined? vote.user_agent
