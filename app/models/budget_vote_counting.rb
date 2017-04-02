@@ -220,8 +220,8 @@ class BudgetVoteCounting
       Vote.where(["area_id = ?",@area_id]).order("created_at").all.each do |vote|
         user_agent = "n/a"
         user_postcode = "n/a"
-        if defined? vote.user_agent
-          user_agent = vote._user_agent
+        if defined? vote.client_user_agent
+          user_agent = vote.client_user_agent
         end
         if defined? vote.user_postcode
           user_postcode = vote.user_postcode
