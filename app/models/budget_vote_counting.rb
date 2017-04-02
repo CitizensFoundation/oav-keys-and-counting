@@ -192,7 +192,7 @@ class BudgetVoteCounting
       total_price+=BudgetBallotItem.get_item_price(@area_id,item_id)
       csv << [item_id,BudgetBallotItem.get_item_name(@area_id,item_id),vote_count,BudgetBallotItem.get_item_price(@area_id,item_id)]
     end
-    csv << ["","Samtals",total_vote_count,total_price]
+    csv << ["","Total",total_vote_count,total_price]
   end
 
   # Add totals to csv
