@@ -23,7 +23,7 @@ class KeysController < ApplicationController
   def create_public_private_key_pair
     # We write the passphrases to file so it is not displayed in the command line with ps auxf for example
     File.open(TEMP_PASSPHRASE_FILE_PATH, 'w') { |file| file.write(params[:passphrase]) }
-    puts params[:passphrase]
+    #puts params[:passphrase]
     puts MASTER_KEY_PAIR_PATH
     puts PRIVATE_KEY_PATH
     puts PUBLIC_KEY_PATH
