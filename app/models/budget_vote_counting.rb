@@ -216,13 +216,17 @@ class BudgetVoteCounting
       write_voting_totals(csv)
       csv << [""]
       csv << ["Total ballots"]
-      csv << ["Area id","Identity","Date","IP Address","Encrypted ballot","User agent"]
+      csv << ["Area id","Identity","Date","IP Address","Encrypted ballot","User agent","User postcode"]
       Vote.where(["area_id = ?",@area_id]).order("created_at").all.each do |vote|
         user_agent = "n/a"
+        user_postcode = "n/a"
         if defined? vote.user_agent
           user_agent = vote._user_agent
         end
-        csv << [vote.area_id,vote.user_id_hash,vote.created_at,vote.client_ip_address,vote.payload_data,user_agent]
+        if defined? vote.user_postcode
+          user_postcode = vote.user_postcode
+        end
+        csv << [vote.area_id,vote.user_id_hash,vote.created_at,vote.client_ip_address,vote.payload_data,user_agent,user_postcode]
       end
     end
   end
