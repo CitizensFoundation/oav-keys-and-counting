@@ -221,12 +221,16 @@
       },
 
       reset: function () {
-        this.set('firstPartOfPassphrase', null);
-        this.set('secondPartOfPassphrase', null);
-        this.set('countInProgress', false);
+        this.set('firstPartOfPassphrase', "");
+        this.set('secondPartOfPassphrase', "");
+        this.set('allPassphrasesValidated', false);
+        this.$$("#confirmedPair").firstPartOfConfirmation = "";
+        this.$$("#confirmedPair").secondPartOfConfirmation = "";
+        this.set('needPassphrase', true);
         this.set('countingCompleted', false);
-        this.set('progressMessage', null);
         this.set('completedAreas', null);
+        this.set('progressMessage', null);
+        this.set('countInProgress', false);
       },
 
       _backupAndReset: function () {
@@ -296,15 +300,7 @@
       },
 
       _startRecount: function () {
-        this.set('firstPartOfPassphrase', "");
-        this.set('secondPartOfPassphrase', "");
-        this.set('allPassphrasesValidated', false);
-        this.$$("#confirmedPair").firstPartOfConfirmation = "";
-        this.$$("#confirmedPair").secondPartOfConfirmation = "";
-        this.set('needPassphrase', true);
-        this.set('countingCompleted', false);
-        this.set('completedAreas', null);
-        this.set('progressMessage', null);
+        this.reset();
       },
 
       _startCounting: function (recount) {
