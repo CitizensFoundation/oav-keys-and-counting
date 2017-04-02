@@ -79,7 +79,7 @@ Rails.application.configure do
 
   config.i18n.fallbacks = true
 
-  config.i18n.default_locale = :is
+  config.i18n.default_locale = :en
 
   config.cache_store = :dalli_store, ENV['MC_1'], ENV['MC_2'], { :namespace => "oav-#{Rails.env}" }
 end

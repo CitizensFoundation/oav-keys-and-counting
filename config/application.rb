@@ -26,8 +26,8 @@ module OpenActiveVotingApp
 
     config.assets.enabled = false
 
-    # Set default locale to Icelandic
-    config.i18n.locale = :is
+    # Set default locale to English
+    config.i18n.locale = :en
 
     # Enable localization fallback to :is
     config.i18n.fallbacks = true
