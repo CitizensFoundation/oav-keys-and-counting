@@ -20,13 +20,12 @@ require 'base64'
 class BudgetVoteHelper
   NEW_PRIORITIES_ARRAY_ID = 0
 
-  attr_reader :idea_ids, :vote
+  attr_reader :item_ids, :vote
 
   @@private_key_file_data = nil
   @@private_key = nil
 
   def initialize(encrypted_payload, private_key_file, passphrase, vote)
-    @idea_ids = []
     @encrypted_payload = encrypted_payload
     @@private_key_file_data = File.read(private_key_file)
     @@private_key = OpenSSL::PKey::RSA.new(@@private_key_file_data, passphrase)
@@ -36,14 +35,13 @@ class BudgetVoteHelper
   def unencryped_vote_for_audit_csv
     # Decrypt the vote for the audit csv
     unpack
-    (@idea_ids)
   end
 
-  def pack(public_key_file,idea_ids)
+  def pack(public_key_file,item_ids)
     # Encrypt the vote, for testing purposes only
     public_key = OpenSSL::PKey::RSA.new(File.read(public_key_file))
-    ideas = idea_ids.to_json
-    @encrypted_payload = Base64.encode64(public_key.public_encrypt(combined_ideas.to_json))
+    items = item_ids.to_json
+    @encrypted_payload = Base64.encode64(public_key.public_encrypt(combined_items.to_json))
   end
 
   def unpack
@@ -56,11 +54,12 @@ class BudgetVoteHelper
     # Decrypt the vote
     decrypted_vote = Base64.decode64(@@private_key.private_decrypt(Base64.decode64(@encrypted_payload)))
     #Rails.logger.info("#{ap @vote}")
+
+    # Fix possible formatting problems
     decrypted_vote = decrypted_vote.gsub(",]","]")
-    ideas = JSON.parse(decrypted_vote).to_a
-    #puts "Last vote for #{combined_ideas}"
-    @idea_ids = ideas
-    #puts "@idea_ids #{@idea_ids}"
+
+    # Convert to JSON and return
+    JSON.parse(decrypted_vote)
   end
 
   def unpack_text_only_for_testing
@@ -69,9 +68,6 @@ class BudgetVoteHelper
 
   def unpack_without_encryption
     # Unpack the vote without decryption
-    ideas = @encrypted_payload
-    if ideas
-      @idea_ids = ideas
-    end
+    @encrypted_payload
   end
 end

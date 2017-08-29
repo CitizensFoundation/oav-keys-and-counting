@@ -23,6 +23,7 @@ class BudgetVoteCounting
 
   def initialize(private_key_file, passphrase, time_for_filename=nil)
     @item_ids_count = Hash.new
+    @item_ids_without_favorite_count = Hash.new
     @item_ids_selected_count = Hash.new
     @private_key_file = private_key_file
     @passphrase = passphrase
@@ -86,6 +87,11 @@ class BudgetVoteCounting
       add_items_to_csv(@item_ids_count,csv)
       unless @invalid_votes.empty?
         csv << [""]
+        csv << ["Total ballots without favorite"]
+        add_items_to_csv(@item_ids_without_favorite_count,csv)
+      end
+      unless @invalid_votes.empty?
+        csv << [""]
         csv << ["Invalid ballots"]
         @invalid_votes.each do |invalid_vote|
           csv << invalid_vote
@@ -147,7 +153,7 @@ class BudgetVoteCounting
     total_budget = BudgetBallotItem.get_area_budget(@area_id)
     left_of_budget = total_budget
 
-    selected = Hash.new
+    selectedVotes = Hash.new
 
     # Go through all the items in the order of votes and selected the ones that still fit the budget
     @item_ids_count.sort_by{|p| [-p[1], p[0]]}.each do |item_id,vote_count|
@@ -155,12 +161,12 @@ class BudgetVoteCounting
 
       # Check if item still fits into what is left of the budget and add it to selected if it does
       if item_price<=left_of_budget
-        selected[item_id]=vote_count
+        selectedVotes[item_id]=vote_count
         left_of_budget-=item_price
       end
     end
 
-    @item_ids_selected_count = selected
+    @item_ids_selected_count = selectedVotes
   end
 
   # Decrypt and add votes from ballot to total
@@ -170,14 +176,27 @@ class BudgetVoteCounting
   end
 
   # Add all the decrypted votes from this ballot
-  def add_votes(item_array)
-    puts item_array.to_s
-    item_array.each do |item_id|
+  def add_votes(vote)
+    selected_item_ids = vote["selectedItemIds"]
+    favorite_item_id = vote["favoriteItemId"]
+    puts selected_item_ids.to_s
+    selected_item_ids.each do |item_id|
       raise "Voted ballot item not found" unless BudgetBallotItem.where(:id=>item_id).first
       # If the counting hash for item does not exists created it
       @item_ids_count[item_id] = 0 unless @item_ids_count[item_id]
 
       # Add one vote for a given item
+      @item_ids_count[item_id] += 1
+
+      if favorite_item_id
+        # Count items without favorite
+        @item_ids_without_favorite_count[item_id] = 0 unless @item_ids_without_favorite_count[item_id]
+
+        # Add one vote for a given item
+        @item_ids_without_favorite_count[item_id] += 1
+      end
+    end
+    if favorite_item_id and @item_ids_count[favorite_item_id]
       @item_ids_count[item_id] += 1
     end
   end
