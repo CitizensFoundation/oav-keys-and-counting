@@ -85,7 +85,7 @@ class BudgetVoteCounting
       csv << [""]
       csv << ["Total ballots"]
       add_items_to_csv(@item_ids_count,csv)
-      unless @invalid_votes.empty?
+      unless @item_ids_without_favorite_count.empty?
         csv << [""]
         csv << ["Total ballots without favorite"]
         add_items_to_csv(@item_ids_without_favorite_count,csv)
