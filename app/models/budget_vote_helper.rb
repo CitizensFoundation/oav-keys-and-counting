@@ -57,6 +57,7 @@ class BudgetVoteHelper
 
     # Fix possible formatting problems
     decrypted_vote = decrypted_vote.gsub(",]","]")
+    Rails.logger.info("Decrypted vote: #{decrypted_vote}")
 
     # Convert to JSON and return
     JSON.parse(decrypted_vote)
