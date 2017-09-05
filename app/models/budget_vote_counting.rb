@@ -202,7 +202,7 @@ class BudgetVoteCounting
     end
     if favorite_item_id and @item_ids_count[favorite_item_id]
       @favorite_count += 1
-      @item_ids_count[item_id] += 1
+      @item_ids_count[favorite_item_id] += 1
     end
   end
 
