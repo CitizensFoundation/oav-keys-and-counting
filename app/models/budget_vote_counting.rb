@@ -30,6 +30,7 @@ class BudgetVoteCounting
     @time_for_filename = time_for_filename
     @invalid_votes = []
     @votes_count = 0
+    @favorite_count = 0
     @counted_votes_count = 0
     @invalid_votes_count = 0
   end
@@ -80,22 +81,25 @@ class BudgetVoteCounting
       csv << [""]
       write_voting_totals(csv)
       csv << [""]
+      csv << ["Total favorite votes"]
+      csv << [@favorite_count]
+      csv << [""]
       csv << ["Projects voted in"]
       add_items_to_csv(@item_ids_selected_count,csv)
       csv << [""]
       csv << ["Total ballots"]
       add_items_to_csv(@item_ids_count,csv)
-      unless @item_ids_without_favorite_count.empty?
-        csv << [""]
-        csv << ["Total ballots without favorite"]
-        add_items_to_csv(@item_ids_without_favorite_count,csv)
-      end
       unless @invalid_votes.empty?
         csv << [""]
         csv << ["Invalid ballots"]
         @invalid_votes.each do |invalid_vote|
           csv << invalid_vote
         end
+      end
+      unless @item_ids_without_favorite_count.empty?
+        csv << [""]
+        csv << ["Total ballots without favorite"]
+        add_items_to_csv(@item_ids_without_favorite_count,csv)
       end
     end
     filename
@@ -153,7 +157,7 @@ class BudgetVoteCounting
     total_budget = BudgetBallotItem.get_area_budget(@area_id)
     left_of_budget = total_budget
 
-    selectedVotes = Hash.new
+    selected_votes = Hash.new
 
     # Go through all the items in the order of votes and selected the ones that still fit the budget
     @item_ids_count.sort_by{|p| [-p[1], p[0]]}.each do |item_id,vote_count|
@@ -161,12 +165,12 @@ class BudgetVoteCounting
 
       # Check if item still fits into what is left of the budget and add it to selected if it does
       if item_price<=left_of_budget
-        selectedVotes[item_id]=vote_count
+        selected_votes[item_id]=vote_count
         left_of_budget-=item_price
       end
     end
 
-    @item_ids_selected_count = selectedVotes
+    @item_ids_selected_count = selected_votes
   end
 
   # Decrypt and add votes from ballot to total
@@ -197,6 +201,7 @@ class BudgetVoteCounting
       end
     end
     if favorite_item_id and @item_ids_count[favorite_item_id]
+      @favorite_count += 1
       @item_ids_count[item_id] += 1
     end
   end

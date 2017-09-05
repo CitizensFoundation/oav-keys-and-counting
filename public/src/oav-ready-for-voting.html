@@ -47,12 +47,24 @@
         margin-top: 0px;
         margin-bottom: 32px;
       }
+
+      .publicKey {
+        margin-bottom: 32px;
+      }
     </style>
 
     <div class="layout vertical center-center buttonContainer">
       <div class="headerContainer">
         {{localize('readyForVoting')}}
       </div>
+        <paper-material election="2" class="layout vertical publicKey">
+          <div>
+            {{localize('publicKey')}}
+          </div>
+          <div>
+            [[publicKey]]
+          </div>
+        </paper-material>
         <a href="/keys/download_private_key_backup"><paper-button raised>{{localize('downloadPrivateKeyBackup')}}</paper-button></a>
         <a href="/keys/download_voting_database"><paper-button raised>{{localize('downloadVotingDatabase')}}</paper-button></a>
     </div>
@@ -65,6 +77,10 @@
   <script>
     Polymer({
       is: 'oav-ready-for-voting',
+
+      properties: {
+        publicKey: String
+      },
 
       behaviors: [
         Polymer.appHelpers,
