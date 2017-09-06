@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 2010-2016 Íbúar ses / Citizens Foundation Iceland
+# Copyright (C) 2010-2017 Íbúar ses / Citizens Foundation Iceland
 # Authors Robert Bjarnason, Gunnar Grimsson & Gudny Maren Valsdottir
 #
 # This program is free software: you can redistribute it and/or modify
@@ -118,7 +118,7 @@ class BudgetVoteCounting
       csv << ["Area id","Date","Voted in project ids"]
       FinalSplitVote.where(["final_split_votes.area_id = ?",@area_id]).includes(:vote).order("votes.created_at").all.each do |final_vote|
         begin
-          csv << [final_vote.area_id,final_vote.vote.created_at]+BudgetVoteHelper.new(final_vote.payload_data, @private_key_file, @passphrase, final_vote).unencryped_vote_for_audit_csv
+          csv << [final_vote.area_id,final_vote.vote.created_at,BudgetVoteHelper.new(final_vote.payload_data, @private_key_file, @passphrase, final_vote).unencryped_vote_for_audit_csv]
         rescue Exception => e
           csv << [final_vote.area_id,final_vote.vote.created_at,"Invalid ballot",final_vote.inspect,e.message]
         end
