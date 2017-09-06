@@ -46,19 +46,12 @@ class BudgetVoteHelper
 
   def unpack
     # Check the encrypted checksum
-    #puts "Encrypted checksum: #{@vote.encrypted_vote_checksum}"
     decrypted_vote_checksum = @@private_key.private_decrypt(Base64.decode64(@vote.encrypted_vote_checksum))
     generated_vote_checksum = @@private_key.private_decrypt(Base64.decode64(@vote.generated_vote_checksum))
     raise "Vote checksum does not match #{decrypted_vote_checksum} != #{generated_vote_checksum}" unless decrypted_vote_checksum==generated_vote_checksum
 
     # Decrypt the vote
     decrypted_vote = Base64.decode64(@@private_key.private_decrypt(Base64.decode64(@encrypted_payload)))
-    #Rails.logger.info("#{ap @vote}")
-
-    # Fix possible formatting problems
-    #decrypted_vote = decrypted_vote.gsub(",]","]")
-    Rails.logger.info("Decrypted vote: #{decrypted_vote}")
-    puts decrypted_vote
 
     # Convert to JSON and return
     JSON.parse(decrypted_vote)
