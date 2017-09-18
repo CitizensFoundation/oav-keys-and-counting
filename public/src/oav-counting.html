@@ -80,6 +80,9 @@
         margin-bottom: 16px;
       }
 
+      .downloadZip {
+        margin: 8px;
+      }
     </style>
 
     <div class="layout vertical center-center">
@@ -107,7 +110,9 @@
       </div>
 
       <div hidden$="[[!countingCompleted">
-        <a href="/counting/download_results_zip">Download all results in a zip file</a>
+        <a href="/counting/download_results_zip">
+          <paper-button class="downloadZip" raised>Download all results in a zip file</paper-button>
+        </a>
       </div>
 
       <div class="layout horizontal center-center wrap" hidden$="[[!countingCompleted">
