@@ -8,6 +8,7 @@
 /.bundle
 /node_modules
 /config/database.yml
+/config/public_key.pem
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal

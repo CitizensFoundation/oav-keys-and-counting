@@ -48,6 +48,16 @@ class CountingController < ApplicationController
     send_file Rails.root.join("results", params[:filename])
   end
 
+
+  def download_results_zip
+    system "zip #{TEMP_ZIP_RESULTS_FILE} results/"
+    if File.exists?(TEMP_ZIP_RESULTS_FILE)
+      send_file TEMP_ZIP_RESULTS_FILE, :filename=>"open_active_voting_results#{Time.now.strftime('%Y_%m_%d.%H_%M_%S')}.zip"
+    else
+      render :file=>"#{Rails.root}/public/404.html", :status=>404
+    end
+  end
+
   def clear_all_votes
     Vote.delete_all
     respond_to do |format|
