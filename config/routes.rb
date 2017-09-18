@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   post "counting/start_counting"
   get "counting/counting_progress"
   get "counting/download_results_file"
+  get "counting/download_results_zip"
   delete "counting/clear_all_votes"
   get "keys/boot"
   delete "keys/backup_and_reset"
