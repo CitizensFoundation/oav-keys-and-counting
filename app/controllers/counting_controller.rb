@@ -50,7 +50,7 @@ class CountingController < ApplicationController
 
 
   def download_results_zip
-    system "zip #{TEMP_ZIP_RESULTS_FILE} results/"
+    system "zip #{TEMP_ZIP_RESULTS_FILE} results/*"
     if File.exists?(TEMP_ZIP_RESULTS_FILE)
       send_file TEMP_ZIP_RESULTS_FILE, :type => 'application/zip', :filename=>"open_active_voting_results#{Time.now.strftime('%Y_%m_%d.%H_%M_%S')}.zip"
     else
