@@ -215,7 +215,8 @@ class BudgetVoteCounting
     items.sort_by{|p| [-p[1], p[0]]}.each do |item_id,vote_count|
       total_vote_count+=vote_count
       total_price+=BudgetBallotItem.get_item_price(@area_id,item_id)
-      csv << [item_id,BudgetBallotItem.get_item_name(@area_id,item_id),vote_count,BudgetBallotItem.get_item_price(@area_id,item_id), previous_item_count == vote_count ? "**** FJÖLDI ATKVÆÐI SAMI OG AÐ OFAN ****" : "" ]
+      csv << [item_id,BudgetBallotItem.get_item_name(@area_id,item_id),vote_count,BudgetBallotItem.get_item_price(@area_id,item_id), previous_item_count == vote_count ? "**** ITEM HAS SAME VOTE COUNT AS PREVIOUS ITEM ****" : "" ]
+      previous_item_count = vote_count
     end
     csv << ["","Total",total_vote_count,total_price]
   end
