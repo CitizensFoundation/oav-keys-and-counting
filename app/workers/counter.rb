@@ -3,6 +3,8 @@ class CounterWorker
   include Sidekiq::Worker
     def perform(passphrase)
       # Starting vote counting
+      I18n.locale = "is"
+
       Dir.mkdir("results") unless File.exists?("results")
 
       time_for_files = Time.now.strftime('%Y_%m_%d.%H_%M_%S')
