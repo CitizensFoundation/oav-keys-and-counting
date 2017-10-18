@@ -190,11 +190,11 @@ class BudgetVoteCounting
       @item_ids_count[item_id] = 0 unless @item_ids_count[item_id]
 
       if favorite_item_id
-        # Add one vote for a given item
-        @item_ids_count[item_id] += 1
-
         # Count items without favorite
         @item_ids_without_favorite_count[item_id] = 0 unless @item_ids_without_favorite_count[item_id]
+
+        # Add one vote for a given item
+        @item_ids_count[item_id] += 1
       end
       # Add one vote for a given item
       @item_ids_without_favorite_count[item_id] += 1
