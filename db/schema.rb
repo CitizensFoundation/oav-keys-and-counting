@@ -126,6 +126,8 @@ ActiveRecord::Schema.define(version: 20170330170937) do
     t.text     "areas_imagemap",                      limit: 65535
     t.text     "counting_progress",                   limit: 65535
     t.text     "ideas_without_pdfs",                  limit: 65535
+    t.string   "election_name",                       limit: 255
+    t.text     "election_description",                limit: 65535
   end
 
   create_table "final_split_votes", force: :cascade do |t|
