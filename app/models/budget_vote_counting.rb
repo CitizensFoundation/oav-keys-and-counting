@@ -40,6 +40,8 @@ class BudgetVoteCounting
 
     @area_id = area_id
 
+    @area = BudgetBallotArea.where(:id=>@area_id)
+
     @votes_count = Vote.where(:area_id=>@area_id).count
 
     # Use data from the final split vote table
@@ -173,10 +175,33 @@ class BudgetVoteCounting
     @item_ids_selected_count = selected_votes
   end
 
+  # Validate that the items in the vote do not exceed the maximum amount
+  def validate_vote(decrypted_vote)
+    favorite_item_id = decrypted_vote["favoriteItemId"]
+    selected_item_ids = decrypted_vote["selectedItemIds"]
+    all_unique = selected_item_ids.length == selected_item_ids.uniq.length
+    total_amount = 0
+    found_favorite = false
+    selected_item_ids.each do |item_id|
+      total_amount+=BudgetBallotItem.get_item_price(@area_id,item_id)
+      if favorite_item_id==item_id
+        found_favorite = true
+      end
+    end
+    total_amount<=@area.budget_amount and
+    (!favorite_item_id || found_favorite) and
+    all_unique and
+    (selected_item_ids and selected_item_ids.length>0)
+  end
+
   # Decrypt and add votes from ballot to total
   def process_vote(vote)
     decrypted_vote = BudgetVoteHelper.new(vote.payload_data, @private_key_file, @passphrase, vote)
-    add_votes(decrypted_vote.unpack)
+    if validate_vote(decrypted_vote.unpack)
+      add_votes(decrypted_vote.unpack)
+    else
+      puts @invalid_votes << [decrypted_vote.unpack.inspect, "Vote did not pass validation"]
+    end
   end
 
   # Add all the decrypted votes from this ballot
