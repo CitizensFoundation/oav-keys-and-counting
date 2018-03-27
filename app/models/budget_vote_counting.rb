@@ -40,7 +40,7 @@ class BudgetVoteCounting
 
     @area_id = area_id
 
-    @area = BudgetBallotArea.where(:id=>@area_id)
+    @area = BudgetBallotArea.where(:id=>@area_id).first
 
     @votes_count = Vote.where(:area_id=>@area_id).count
 
