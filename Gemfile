@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 ruby '2.2.9'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.9'
+gem 'rails', '4.2.10'
 gem 'sidekiq'
 gem 'tzinfo-data'
 
@@ -22,6 +22,7 @@ gem 'coffee-rails', '~> 4.1.0'
 gem 'jbuilder', '~> 2.0'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
+gem 'rails-html-sanitizer','~> 1.0.4'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
@@ -33,7 +34,7 @@ gem 'haml' # generate html from templates
 gem 'jquery-rails' # Jquery for Rails
 gem 'mysql2' # The Mysql Driver
 gem 'dalli' # Memcache driver
-gem 'nokogiri','1.6.8' # XML/HTML Parsing library
+gem 'nokogiri','1.8.4' # XML/HTML Parsing library
 gem 'psych'
 #gem 'soap4r', :path =>"lib/soap4r" # git => 'https://github.com/rbjarnason/soap4r.git'
 gem 'ruby-saml', :path => "lib/ruby-saml" # :git => 'https://github.com/rbjarnason/ruby-saml.git', :ref=>"63ce604db2e562eeb25467e7e1655d16bab7d9cb"
