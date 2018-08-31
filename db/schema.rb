@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170330170937) do
+ActiveRecord::Schema.define(version: 20180330170937) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "resource_id",   limit: 255,   null: false

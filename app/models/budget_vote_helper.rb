@@ -3,7 +3,7 @@
 require 'openssl'
 require 'base64'
 
-# Copyright (C) 2010-2017 Íbúar ses / Citizens Foundation Iceland
+# Copyright (C) 2010-2018 Íbúar ses / Citizens Foundation Iceland
 # Authors Robert Bjarnason, Gunnar Grimsson & Guðny Maren Valsdottir
 #
 # This program is free software: you can redistribute it and/or modify
