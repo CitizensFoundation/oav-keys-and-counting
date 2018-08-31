@@ -56,7 +56,9 @@ class Vote < ActiveRecord::Base
                     ORDER BY
                             created_at DESC
                     LIMIT 1
-                  )}
+                  )
+                AND saml_assertion_id IS NOT NULL
+                }
 
     query += " ORDER BY created_at DESC"
     Vote.find_by_sql(query)

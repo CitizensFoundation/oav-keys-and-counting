@@ -3,6 +3,7 @@
 <link rel="import" href="../bower_components/paper-map-info/paper-map-info.html">
 
 <link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
@@ -83,6 +84,17 @@
       .downloadZip {
         margin: 8px;
       }
+
+     .largeSpinner {
+        height: 64px !important;
+        width: 64px !important;
+        --paper-spinner-stroke-width: 7px;
+        margin: 32px;
+      }
+
+      paper-spinner {
+        background: transparent;
+      }
     </style>
 
     <div class="layout vertical center-center">
@@ -102,7 +114,11 @@
         <div class="createButtonContainer" hidden$="[[!allPassphrasesValidated]]">
           <paper-button raised on-tap="_startCounting">{{localize('startCounting')}}</paper-button>
         </div>
+      </div>
 
+      <div class="layout vertical center-center" hidden$="[[!gettingCountReady]]">
+        <div class="headerContainer">{{localize('gettingCountReady')}}</div>
+        <paper-spinner class="largeSpinner" active></paper-spinner>
       </div>
 
       <div class="layout horizontal center-center" hidden$="[[!progressMessage]]">
@@ -226,7 +242,16 @@
 
         areaTimeForFiles: {
           type: String
+        },
+
+        gettingCountReady: {
+          type: Boolean,
+          computed: _gettingCountReady(countInProgress, progressMessage)
         }
+      },
+
+      _gettingCountReady: function (countInProgress, progressMessage) {
+        return countInProgress && progressMessage == null;
       },
 
       reset: function () {

@@ -1,5 +1,6 @@
 {
   "en": {
+    "gettingCountReady": "Splitting authentication & votes",
     "passphraseError": "Wrong Passphrase",
     "textToEncrypt": "Text to encrypt",
     "decryptedText": "Decrypted text",
