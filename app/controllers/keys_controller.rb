@@ -152,6 +152,14 @@ class KeysController < ApplicationController
     if public_key_exists
       FileUtils.copy(PUBLIC_KEY_PATH, backupPath+"/public.key")
     end
+
+    puts "Backup results folder and reset it"
+    results_root = "#{Rails.root}/results"
+    if File.directory?(results_root)
+      FileUtils.results_root ,  "#{Rails.root}/Backups/resultsAt/#{Time.now.strftime('%Y_%m_%d.%H_%M_%S')}"
+    end
+    FileUtils.mkdir_p(results_root)
+
     puts "Before drop"
     system "rake db:drop"
 
