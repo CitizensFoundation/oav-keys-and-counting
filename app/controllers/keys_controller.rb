@@ -155,8 +155,13 @@ class KeysController < ApplicationController
 
     puts "Backup results folder and reset it"
     results_root = "#{Rails.root}/results"
+    backups_root = "#{Rails.root}/Backups/resultsAt"
+    unless File.directory?(backups_root)
+      FileUtils.mkdir_p(backups_root)
+    end
+
     if File.directory?(results_root)
-      FileUtils.mv(results_root, "#{Rails.root}/Backups/resultsAt/#{Time.now.strftime('%Y_%m_%d.%H_%M_%S')}")
+      FileUtils.mv(results_root, "#{backups_root}/#{Time.now.strftime('%Y_%m_%d.%H_%M_%S')}")
     end
     FileUtils.mkdir_p(results_root)
 
