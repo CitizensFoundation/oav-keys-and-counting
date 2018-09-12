@@ -1,6 +1,6 @@
 {
   "en": {
-    "gettingCountReady": "Splitting authentication & votes",
+    "gettingCountReady": "Preparing counting...",
     "passphraseError": "Wrong Passphrase",
     "textToEncrypt": "Text to encrypt",
     "decryptedText": "Decrypted text",
@@ -97,6 +97,7 @@
     "auth_dialog": "Authenticating and sending in vote"
   },
   "is": {
+    "gettingCountReady": "Atkvæði undirbúin fyrir talningu...",
     "booting": "Booting...",
     "firstPartOfPassword": "Fyrri hluti leyniorðs",
     "secondPartOfPassword": "Fyrri hluti leyniorðs",
