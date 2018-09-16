@@ -266,7 +266,7 @@ class BudgetVoteCounting
       csv << [""]
       csv << ["Total ballots"]
       csv << ["Area id","Identity","Date","IP Address","Encrypted ballot","User agent","User postcode"]
-      Vote.where(["area_id = ?",@area_id]).order("created_at").all.each do |vote|
+      Vote.where(["area_id = ?",@area_id]).where.not(:saml_assertion_id=>nil).order("created_at").all.each do |vote|
         user_agent = "n/a"
         user_postcode = "n/a"
         if defined? vote.client_user_agent
