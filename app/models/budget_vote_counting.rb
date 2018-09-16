@@ -54,6 +54,7 @@ class BudgetVoteCounting
       begin
         process_vote(vote)
       rescue Exception => e
+        Rails.logger.error e.message
         puts @invalid_votes << [vote.inspect,e.message]
       end
     end
@@ -97,9 +98,8 @@ class BudgetVoteCounting
         @invalid_votes.each do |invalid_vote|
           begin
             csv << invalid_vote
-          rescue
-            puts "VOTE CRASHED ON INVALID"
-            puts invalid_vote
+          rescue Exception => e
+            Rails.logger.error "Vote count crashed on invalid #{e.message}"
           end
         end
       end
