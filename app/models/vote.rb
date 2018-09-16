@@ -37,6 +37,11 @@ class Vote < ActiveRecord::Base
     # Split ballot data from voter ids into a new table called FinalSplitVote
     FinalSplitVote.delete_all
     Vote.all_latest_votes_by_distinct_voters.each do |vote|
+      if vote.saml_assertion_id
+        Rails.logger.debug vote.saml_assertion_id
+      else
+        Rails.logger.error "Counting unauthenticated vote"
+      end
       generated_vote_checksum = Vote.generate_encrypted_checksum(vote.user_id_hash, vote.payload_data, vote.client_ip_address, vote.area_id, vote.session_id)
       FinalSplitVote.create(:area_id => vote.area_id, :vote_id=>vote.id, :payload_data=>vote.payload_data,
                             :encrypted_vote_checksum => vote.encrypted_vote_checksum, :generated_vote_checksum=> generated_vote_checksum)

@@ -169,4 +169,7 @@ ActiveRecord::Schema.define(version: 20180330170937) do
   add_index "votes", ["user_id_hash"], name: "index_votes_on_user_id_hash", using: :btree
   add_index "votes", ["session_id"], name: "index_votes_on_session_id", using: :btree
   add_index "votes", ["session_id","saml_assertion_id"], name: "index_votes_on_session_id_and_saml_id", using: :btree
+  add_index "votes", ["saml_assertion_id"], name: "index_votes_saml_id", using: :btree
+  add_index "votes", ["created_at"], name: "index_votes_created_at", using: :btree
+  add_index "votes", ["user_id_hash","created_at","id"], name: "index_votes_id_hash_created_at", using: :btree
 end

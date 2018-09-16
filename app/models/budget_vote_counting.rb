@@ -95,7 +95,12 @@ class BudgetVoteCounting
         csv << [""]
         csv << ["Invalid ballots"]
         @invalid_votes.each do |invalid_vote|
-          csv << invalid_vote
+          begin
+            csv << invalid_vote
+          rescue
+            puts "VOTE CRASHED ON INVALID"
+            puts invalid_vote
+          end
         end
       end
       unless @item_ids_without_favorite_count.empty?
