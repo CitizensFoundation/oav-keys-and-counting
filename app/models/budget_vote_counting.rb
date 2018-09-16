@@ -42,7 +42,7 @@ class BudgetVoteCounting
 
     @area = BudgetBallotArea.where(:id=>@area_id).first
 
-    @votes_count = Vote.where(:area_id=>@area_id).count
+    @votes_count = Vote.where(:area_id=>@area_id).where.not(:saml_assertion_id=nil).count
 
     # Use data from the final split vote table
     final_split_vote = FinalSplitVote.where(:area_id=>area_id)
@@ -250,7 +250,7 @@ class BudgetVoteCounting
     csv << [@area_id,BudgetBallotItem.get_area_name(@area_id),BudgetBallotItem.get_area_budget(@area_id)]
     csv << [""]
     csv << ["Total ballots","Counted unique ballots","Total ballots in this area","Counted unique ballots in this area"]
-    csv << [Vote.count,FinalSplitVote.count,Vote.where(:area_id=>@area_id).count,FinalSplitVote.where(:area_id=>@area_id).count]
+    csv << [Vote.where.not(:saml_assertion_id=>nil).count,FinalSplitVote.count,Vote.where(:area_id=>@area_id).where.not(:saml_assertion_id=>nil).count,FinalSplitVote.where(:area_id=>@area_id).count]
     csv << [""]
   end
 

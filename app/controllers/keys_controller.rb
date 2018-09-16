@@ -85,7 +85,7 @@ class KeysController < ApplicationController
       config_table_exists = ActiveRecord::Base.connection.table_exists? 'config'
       has_tested_key_pair = File.exists?(KEY_PAIR_HAS_BEEN_TESTED_FILE)
 
-      vote_count = (vote_table_exists and Vote.count) ? Vote.count : -1
+      vote_count = (vote_table_exists and Vote.where.not(:saml_assertion_id=>nil).count) ? Vote.where.not(:saml_assertion_id=>nil).count : -1
       private_key_exists = File.exists?(PRIVATE_KEY_PATH)
       public_key = (config_table_exists and BudgetConfig.first and BudgetConfig.first.public_key)
       public_key_file_exists = File.exists?(PUBLIC_KEY_PATH)
