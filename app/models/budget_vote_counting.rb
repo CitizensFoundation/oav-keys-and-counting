@@ -42,7 +42,7 @@ class BudgetVoteCounting
 
     @area = BudgetBallotArea.where(:id=>@area_id).first
 
-    @votes_count = Vote.where(:area_id=>@area_id).where.not(:saml_assertion_id=nil).count
+    @votes_count = Vote.where(:area_id=>@area_id).where.not(:saml_assertion_id=>nil).count
 
     # Use data from the final split vote table
     final_split_vote = FinalSplitVote.where(:area_id=>area_id)
