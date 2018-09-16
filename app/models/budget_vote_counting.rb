@@ -202,7 +202,6 @@ class BudgetVoteCounting
   # Decrypt and add votes from ballot to total
   def process_vote(vote)
     decrypted_vote = BudgetVoteHelper.new(vote.payload_data, @private_key_file, @passphrase, vote)
-    Rails.logger.info decrypted_vote
     if validate_vote(decrypted_vote.unpack)
       add_votes(decrypted_vote.unpack)
     else
