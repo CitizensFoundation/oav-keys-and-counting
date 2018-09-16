@@ -67,6 +67,4 @@ class BudgetVoteHelper
     # Unpack the vote without decryption
     @encrypted_payload
   end
-
-  BudgetVoteHelper.new(vote.payload_data, @private_key_file, @passphrase, vote)
 end
