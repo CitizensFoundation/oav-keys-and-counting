@@ -51,7 +51,7 @@ class Vote < ActiveRecord::Base
   def self.all_latest_votes_by_distinct_voters
     # Get all the latest ballot votes from each user
     query = %q{
-        SELECT  id, created_at, area_id, payload_data, user_id_hash, client_ip_address, encrypted_vote_checksum, session_id
+        SELECT  id, created_at, area_id, payload_data, user_id_hash, saml_assertion_id, client_ip_address, encrypted_vote_checksum, session_id
         FROM    votes vs
         WHERE   id =
                   (
