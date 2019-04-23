@@ -6,7 +6,7 @@ class ConfigAndBallot < ActiveRecord::Migration
     end
 
     create_table :config do |t|
-      t.string :rsk_url, :null=>false
+      t.string :auth_url, :null=>false
       t.integer :timeout_in_seconds, :null=>false
       t.timestamps
     end

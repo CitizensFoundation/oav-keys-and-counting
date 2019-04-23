@@ -69,7 +69,7 @@ def create_html_doc(area_name,test_ballot_number,selected_ideas_html)
   <h2>Betri hverfi - Forskrift vegna prófana á kosningakerfi</h2>
   <h1>GSUB_NAFN_HVERFIS</h1>
   <h3>Númer þitt er GSUB_NUMERID_THITT</h3>
-  
+
   <h3 style='color:red'>Vinsamlegast kjóstu nákvæmlega eins og sýnt er hér að neðan!</h3>
   <h4 style='color:red'>Ekki gleyma að senda tölvupóst á <a href='betrireykjavik@ibuar.is'>betrireykjavik@ibuar.is</a> með númerinu þínu eftir að þú hefur kosið.</h4>
 
@@ -78,7 +78,7 @@ def create_html_doc(area_name,test_ballot_number,selected_ideas_html)
 <h4>Notandanafn: test2014 </h4>
 <h4>Lykilorð: AizeiNg7 </h4>
 <br />
-  
+
   <table border="0" cellpadding="3" cellspacing="3">
     <tr>
       <td><ul>
@@ -330,7 +330,7 @@ namespace :ballot do
 
     config=BudgetConfig.new
     config.timeout_in_seconds = 600
-    config.rsk_url = "https://audkenning.vottun.is/Login/Login?electionId=11999a35-5dde-41a0-9456-99712eb39430&returnUrl=https%3A%2F%2Fkosning.kopavogur.is%2Fauthenticate_from_island_is"
+    config.auth_url = "https://audkenning.vottun.is/Login/Login?electionId=11999a35-5dde-41a0-9456-99712eb39430&returnUrl=https%3A%2F%2Fkosning.kopavogur.is%2Fauthenticate_from_island_is"
     config.public_key = public_key
     config.save
 
