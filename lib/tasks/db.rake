@@ -48,6 +48,9 @@ namespace :db do
       hostText = host ? "--host="+host : ""
       cmd = "mysql -u #{user} #{hostText} --password=#{password} #{db} < #{filePath}"
     end
+
+    ENV["DISABLE_DATABASE_ENVIRONMENT_CHECK"]="1"
+
     puts "Before drop"
     Rake::Task["db:drop"].invoke
 

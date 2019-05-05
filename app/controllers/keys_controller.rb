@@ -165,6 +165,8 @@ class KeysController < ApplicationController
     end
     FileUtils.mkdir_p(results_root)
 
+    ENV["DISABLE_DATABASE_ENVIRONMENT_CHECK"]="1"
+
     puts "Before drop"
     system "rake db:drop"
 
