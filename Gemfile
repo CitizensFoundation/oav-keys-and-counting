@@ -8,7 +8,7 @@ ruby '2.7.5'
 gem 'rails', '5.2.6'
 gem 'tzinfo-data'
 gem 'rails-html-sanitizer'
-gem 'sidekiq'
+gem 'sidekiq', '6.1.3'
 
 gem "sprockets", "<4"
 
