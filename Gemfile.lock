@@ -81,7 +81,7 @@ GEM
     jbuilder (2.11.3)
       activesupport (>= 5.0.0)
     json (1.8.6)
-    loofah (2.12.0)
+    loofah (2.19.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     macaddr (1.7.2)
@@ -102,7 +102,7 @@ GEM
       rack
       rake (>= 0.8.1)
     psych (4.0.2)
-    racc (1.6.0)
+    racc (1.6.1)
     rack (2.2.3)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
