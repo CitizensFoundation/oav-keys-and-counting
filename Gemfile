@@ -1,11 +1,11 @@
 source 'https://rubygems.org'
 
-ruby '2.7.5'
+ruby '2.7.8'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 #gem 'activesupport', '4.2.7.1', :path => "lib/rails/activesupport-4.2.7.1"
 #gem 'rake'
-gem 'rails', '5.2.6'
+gem 'rails', '6.1.7.4'
 gem 'tzinfo-data'
 gem 'rails-html-sanitizer'
 gem 'sidekiq'
@@ -33,7 +33,6 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem "browser"
 gem 'globalize'
 # Gems used in all environments including production
-gem "airbrake" # Online error reporting system
 gem 'haml' # generate html from templates
 #gem 'jquery-rails' # Jquery for Rails
 gem 'mysql2' # The Mysql Driver
