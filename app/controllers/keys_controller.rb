@@ -221,6 +221,7 @@ class KeysController < ApplicationController
     begin
       helper = BudgetVoteHelper.new(vote.payload_data, PRIVATE_KEY_PATH, params[:passphrase], vote)
       decrypted_text = helper.unpack_text_only_for_testing
+      decrypted_text.force_encoding('ISO-8859-1').encode('UTF-8') unless passphrase_error
     rescue OpenSSL::PKey::RSAError => e
       passphrase_error = true
     end

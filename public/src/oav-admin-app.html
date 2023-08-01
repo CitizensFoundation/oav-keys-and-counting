@@ -204,7 +204,7 @@
             <h1>[[localize('booting')]]</h1>
           </div>
           <oav-create-key-pair id="createKeyPair" name="createKeyPair"></oav-create-key-pair>
-          <oav-test-key-pair id="testKeyPair" name="testKeyPair"></oav-test-key-pair>
+          <oav-test-key-pair id="testKeyPair" name="testKeyPair" public-key="[[publicKey]]"></oav-test-key-pair>
           <oav-counting id="counting" name="counting" completed-areas="{{completedAreas}}"
                         area-time-for-files="{{areaTimeForFiles}}"
                         counting-completed="{{countingCompleted}}"></oav-counting>
@@ -339,9 +339,6 @@
             this.$.counting._triggerCountingProgress();
           }
           this.set('page', 'counting');
-        }
-        if (response.public_key && response.public_key!=="") {
-          this.$$("#testKeyPair").encryptTextString(response.public_key);
         }
       },
 

@@ -20,7 +20,7 @@
     "noNonAsciiInPassphrases": "You tried to use an character that is not allowed, please start again and only use allowed characters",
     "confirmPassphrase": "Confirm Passphrase",
     "newPassphrase": "New Passphrase",
-    "allowedPassphraseCharacters": "Allowed Passphrase Characters",
+    "allowedPassphraseCharacters": "Allowed Passphrase Characters (min 8)",
     "allowedPassphraseCharactersExample": "a..z 0..9 . , !  #",
     "downloadPublicKey": "downloadPublicKey",
     "createKeyPair": "Create Key Pair",

@@ -1,5 +1,7 @@
 {
   "en": {
+    "encryptText": "Encrypt Text",
+    "textToTestEncryptionWith": "Text to test encryption with",
     "gettingCountReady": "Preparing counting...",
     "passphraseError": "Wrong Passphrase",
     "textToEncrypt": "Text to encrypt",
@@ -97,6 +99,8 @@
     "auth_dialog": "Authenticating and sending in vote"
   },
   "is": {
+    "encryptText": "Dulkóða texta",
+    "textToTestEncryptionWith": "Texti til að prófa með",
     "gettingCountReady": "Atkvæði undirbúin fyrir talningu...",
     "booting": "Booting...",
     "firstPartOfPassword": "Fyrri hluti leyniorðs",
