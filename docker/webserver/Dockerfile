@@ -1,4 +1,4 @@
-FROM phusion/passenger-ruby27:2.5.1
+FROM phusion/passenger-ruby33:3.0.2
 MAINTAINER Robert Vidar Bjarnason <robert@citizens.is>
 
 RUN echo 'version 5.4.5'
@@ -27,4 +27,6 @@ ADD setup_app.sh /etc/my_init.d/setup_app.sh
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-EXPOSE 443
+COPY . /home/app/oav_website
+
+EXPOSE 80
