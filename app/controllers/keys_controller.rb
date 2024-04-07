@@ -21,19 +21,8 @@ require 'fileutils'
 class KeysController < ApplicationController
 
   def create_public_private_key_pair
-    Rails.logger.debug "Content Type: #{request.content_type}"
-    body_content = request.body.read
-    Rails.logger.debug "Request body: #{body_content}"
-    request.body.rewind # It's important to rewind after reading.
-
-    begin
-      parsed_body = JSON.parse(body_content)
-      passphrase = parsed_body["passphrase"]
-    rescue JSON::ParserError => e
-      Rails.logger.error "JSON Parse Error: #{e.message}"
-      return render json: { error: e.message }, status: :bad_request
-    end
-
+    passphrase = params.passphrase
+    puts passphrase
     # We write the passphrases to file so it is not displayed in the command line with ps auxf for example
     File.open(TEMP_PASSPHRASE_FILE_PATH, 'w') { |file| file.write(passphrase) }
     #puts params[:passphrase]
