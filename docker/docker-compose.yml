@@ -36,5 +36,6 @@ services:
       - /root/log:/var/log
     command: /bin/bash -c "cd /home/app/oav_website; bundle exec sidekiq -e production"
     network_mode: host
-    depends_on: web
+    depends_on:
+      - web
     restart: always
