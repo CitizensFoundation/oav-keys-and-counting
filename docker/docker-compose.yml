@@ -16,7 +16,7 @@ services:
       - ./webserver/nginx.conf:/etc/nginx/sites-enabled/oav_website.conf
       - ./webserver/rails-env.conf:/etc/nginx/main.d/rails-env.conf
       - ./webserver/setup_app.sh:/etc/my_init.d/setup_app.sh
-      - /root/oav-keys-and-counting:/home/app/oav_website
+      - ../../oav-keys-and-counting:/home/app/oav_website
     command: /sbin/my_init
 
   sidekiq:
@@ -32,7 +32,7 @@ services:
       - ./webserver/nginx.conf:/etc/nginx/sites-enabled/oav_website.conf
       - ./webserver/rails-env.conf:/etc/nginx/main.d/rails-env.conf
       - ./webserver/setup_app.sh:/etc/my_init.d/setup_app.sh
-      - /root/oav-keys-and-counting:/home/app/oav_website
+      - ../../oav-keys-and-counting:/home/app/oav_website
       - /root/log:/var/log
     command: /bin/bash -c "cd /home/app/oav_website; bundle exec sidekiq -e production"
     network_mode: host
