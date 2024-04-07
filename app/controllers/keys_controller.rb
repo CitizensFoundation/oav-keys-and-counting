@@ -27,7 +27,7 @@ class KeysController < ApplicationController
     puts "CHECKING PARAMS"
     # Parse raw_post as JSON
     begin
-      parsed_body = JSON.parse(request.raw_post.to_s)
+      parsed_body = JSON.parse('{"passphrase":"http://167.172.48.206/http://167.172.48.206/"}')
     rescue JSON::ParserError => e
       puts "Error parsing JSON: #{e}"
       puts "Raw POST Body: #{request.raw_post}"
