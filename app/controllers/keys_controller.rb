@@ -21,6 +21,9 @@ require 'fileutils'
 class KeysController < ApplicationController
 
   def create_public_private_key_pair
+    puts "Request Content-Type: #{request.content_type}"
+    puts "Request Method: #{request.method}"
+    puts "Raw POST Body: #{request.raw_post}"
     puts "CHECKING PARAMS"
     puts params.inspect
     passphrase = params["passphrase"]
