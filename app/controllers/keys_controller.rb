@@ -21,6 +21,8 @@ require 'fileutils'
 class KeysController < ApplicationController
 
   def create_public_private_key_pair
+    Rails.logger.debug "Request body: #{request.body.read}"
+    request.body.rewind # If you read the body, you need to rewind it for further processing
     passphrase = params.permit(:passphrase)[:passphrase]
     puts passphrase
     # We write the passphrases to file so it is not displayed in the command line with ps auxf for example
