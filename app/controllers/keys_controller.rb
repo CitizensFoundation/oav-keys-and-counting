@@ -21,24 +21,8 @@ require 'fileutils'
 class KeysController < ApplicationController
 
   def create_public_private_key_pair
-    puts "Request Content-Type: #{request.content_type}"
-    puts "Request Method: #{request.method}"
-    puts "Raw POST Body: #{request.raw_post}"
-    puts "CHECKING PARAMS"
-    # Parse raw_post as JSON
-    begin
-      parsed_body = JSON.parse('{"passphrase":"http://167.172.48.206/http://167.172.48.206/"}')
-    rescue JSON::ParserError => e
-      puts "Error parsing JSON: #{e}"
-      puts "Raw POST Body: #{request.raw_post}"
-      return render :json => {:error => "Error parsing JSON"}
-    end
-
-    puts parsed_body.inspect
-    passphrase = parsed_body["passphrase"]
-    puts passphrase
     # We write the passphrases to file so it is not displayed in the command line with ps auxf for example
-    File.open(TEMP_PASSPHRASE_FILE_PATH, 'w') { |file| file.write(passphrase) }
+    File.open(TEMP_PASSPHRASE_FILE_PATH, 'w') { |file| file.write(params[:passphrase]) }
     #puts params[:passphrase]
     puts MASTER_KEY_PAIR_PATH
     puts PRIVATE_KEY_PATH
