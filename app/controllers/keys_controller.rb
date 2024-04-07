@@ -26,9 +26,9 @@ class KeysController < ApplicationController
     puts "Raw POST Body: #{request.raw_post}"
     puts "CHECKING PARAMS"
     # Parse raw_post as JSON
-    try:
+    begin
       params = JSON.parse(request.raw_post)
-    except JSON::ParserError => e:
+    rescue JSON::ParserError => e
       puts "Error parsing JSON: #{e}"
       puts "Raw POST Body: #{request.raw_post}"
       return render :json => {:error => "Error parsing JSON"}
