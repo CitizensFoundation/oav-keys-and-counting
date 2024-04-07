@@ -21,7 +21,8 @@ require 'fileutils'
 class KeysController < ApplicationController
 
   def create_public_private_key_pair
-    puts params
+    puts "CHECKING PARAMS"
+    puts params.inspect
     passphrase = params["passphrase"]
     puts passphrase
     # We write the passphrases to file so it is not displayed in the command line with ps auxf for example
