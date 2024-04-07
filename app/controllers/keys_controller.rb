@@ -27,15 +27,15 @@ class KeysController < ApplicationController
     puts "CHECKING PARAMS"
     # Parse raw_post as JSON
     begin
-      params = JSON.parse(request.raw_post)
+      parsed_body = JSON.parse(request.raw_post)
     rescue JSON::ParserError => e
       puts "Error parsing JSON: #{e}"
       puts "Raw POST Body: #{request.raw_post}"
       return render :json => {:error => "Error parsing JSON"}
     end
 
-    puts params.inspect
-    passphrase = params["passphrase"]
+    puts parsed_body.inspect
+    passphrase = parsed_body["passphrase"]
     puts passphrase
     # We write the passphrases to file so it is not displayed in the command line with ps auxf for example
     File.open(TEMP_PASSPHRASE_FILE_PATH, 'w') { |file| file.write(passphrase) }
