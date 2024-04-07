@@ -34,6 +34,8 @@ services:
       - ./webserver/setup_app.sh:/etc/my_init.d/setup_app.sh
       - /root/oav-keys-and-counting:/home/app/oav_website
       - /root/log:/var/log
-    command: /bin/bash -c "cd /home/app/oav_website; bundle install; bundle exec sidekiq -e production"
+    command: /bin/bash -c "cd /home/app/oav_website; bundle exec sidekiq -e production"
     network_mode: host
+    depends_on:
+      - serviceName: web
     restart: always
