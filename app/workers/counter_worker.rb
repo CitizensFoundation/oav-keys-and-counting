@@ -6,7 +6,7 @@ class CounterWorker
       # Starting vote counting
       I18n.locale = "is"
 
-      Dir.mkdir("results") unless File.exists?("results")
+      Dir.mkdir("results") unless File.exist?("results")
 
       time_for_files = Time.now.strftime('%Y_%m_%d.%H_%M_%S')
 

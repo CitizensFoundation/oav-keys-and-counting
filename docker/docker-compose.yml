@@ -8,6 +8,7 @@ services:
     container_name: oav_keys_and_counting
     ports:
       - "80:80"
+    network_mode: host
     environment:
       - HOME=/root
       - APP_DB_HOST=10.10.11.101
@@ -17,3 +18,21 @@ services:
       - ./webserver/setup_app.sh:/etc/my_init.d/setup_app.sh
     command: /sbin/my_init
 
+  sidekiq:
+    build:
+      context: ../.
+      dockerfile: docker/webserver/Dockerfile
+    container_name: oav_keys_and_counting_sidekiq
+    environment:
+      - HOME=/root
+      - RAILS_ENV=production
+      - APP_DB_HOST=10.10.11.101
+    volumes:
+      - ./webserver/nginx.conf:/etc/nginx/sites-enabled/oav_website.conf
+      - ./webserver/rails-env.conf:/etc/nginx/main.d/rails-env.conf
+      - ./webserver/setup_app.sh:/etc/my_init.d/setup_app.sh
+      - /root/oav-keys-and-counting:/home/app/oav_website
+      - /root/log:/var/log
+    command: /bin/bash -c "cd /home/app/oav_website; bundle install; bundle exec sidekiq -e production"
+    network_mode: host
+    restart: always

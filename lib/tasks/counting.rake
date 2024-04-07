@@ -26,7 +26,7 @@ namespace :counting do
   desc "Count all votes"
   task(:count => :environment) do
     raise "Missing private_key parameters" unless ENV['private_key']
-    Dir.mkdir("results") unless File.exists?("results")
+    Dir.mkdir("results") unless File.exist?("results")
     puts
     puts "Starting vote counting"
     puts "----------------------"

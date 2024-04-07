@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-require Rails.root.join("app","workers","counter.rb")
+require Rails.root.join("app","workers","counter_worker.rb")
 
 class CountingController < ApplicationController
 
@@ -51,7 +51,7 @@ class CountingController < ApplicationController
 
   def download_results_zip
     system "zip #{TEMP_ZIP_RESULTS_FILE} results/*"
-    if File.exists?(TEMP_ZIP_RESULTS_FILE)
+    if File.exist?(TEMP_ZIP_RESULTS_FILE)
       send_file TEMP_ZIP_RESULTS_FILE, :type => 'application/zip', :filename=>"open_active_voting_results#{Time.now.strftime('%Y_%m_%d.%H_%M_%S')}.zip"
     else
       render :file=>"#{Rails.root}/public/404.html", :status=>404

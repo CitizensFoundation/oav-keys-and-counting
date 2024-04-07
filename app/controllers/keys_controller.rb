@@ -83,12 +83,12 @@ class KeysController < ApplicationController
     begin
       vote_table_exists = ActiveRecord::Base.connection.table_exists? 'votes'
       config_table_exists = ActiveRecord::Base.connection.table_exists? 'config'
-      has_tested_key_pair = File.exists?(KEY_PAIR_HAS_BEEN_TESTED_FILE)
+      has_tested_key_pair = File.exist?(KEY_PAIR_HAS_BEEN_TESTED_FILE)
 
       vote_count = (vote_table_exists and Vote.where.not(:saml_assertion_id=>nil).count) ? Vote.where.not(:saml_assertion_id=>nil).count : -1
-      private_key_exists = File.exists?(PRIVATE_KEY_PATH)
+      private_key_exists = File.exist?(PRIVATE_KEY_PATH)
       public_key = (config_table_exists and BudgetConfig.first and BudgetConfig.first.public_key)
-      public_key_file_exists = File.exists?(PUBLIC_KEY_PATH)
+      public_key_file_exists = File.exist?(PUBLIC_KEY_PATH)
       if vote_count>0 and private_key_exists and public_key
         boot_state = "counting"
       elsif config_table_exists and vote_table_exists and private_key_exists and public_key and has_tested_key_pair
@@ -133,8 +133,8 @@ class KeysController < ApplicationController
     rescue
       vote_count = -1
     end
-    private_key_exists = File.exists?(PRIVATE_KEY_PATH)
-    public_key_exists = File.exists?(PUBLIC_KEY_PATH)
+    private_key_exists = File.exist?(PRIVATE_KEY_PATH)
+    public_key_exists = File.exist?(PUBLIC_KEY_PATH)
 
     puts "Before dump backup"
     if vote_count>0 or public_key_exists
@@ -186,7 +186,7 @@ class KeysController < ApplicationController
   end
 
   def download_public_key_backup
-    if File.exists?(PUBLIC_KEY_PATH)
+    if File.exist?(PUBLIC_KEY_PATH)
       send_file PUBLIC_KEY_PATH, :filename=>"open_active_voting_#{Time.now.strftime('%Y_%m_%d.%H_%M_%S')}_public.key"
     else
       render :status => 404
@@ -194,7 +194,7 @@ class KeysController < ApplicationController
   end
 
   def download_private_key_backup
-    if File.exists?(PRIVATE_KEY_PATH)
+    if File.exist?(PRIVATE_KEY_PATH)
       send_file PRIVATE_KEY_PATH, :filename=>"open_active_voting_#{Time.now.strftime('%Y_%m_%d.%H_%M_%S')}_private.key"
     else
       render :status => 404
@@ -205,7 +205,7 @@ class KeysController < ApplicationController
     system "rake db:dump_backup_for_download"
     download_filename = Rails.root.join("Backups","sql","latest_for_download.sql")
     puts download_filename
-    if File.exists?(download_filename)
+    if File.exist?(download_filename)
       send_file download_filename, :filename=>"open_active_voting_database_with_public_key_#{Time.now.strftime('%Y_%m_%d.%H_%M_%S')}.sql"
     else
       render :file=>"#{Rails.root}/public/404.html", :status=>404

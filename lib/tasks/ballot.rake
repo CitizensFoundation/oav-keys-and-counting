@@ -119,7 +119,7 @@ namespace :ballot do
       offset = 1
     end
 
-    Dir.mkdir("test_ballots") unless File.exists?("test_ballots")
+    Dir.mkdir("test_ballots") unless File.exist?("test_ballots")
     test_ballots = []
     number_of_voters.times do |test_ballot_number|
       selected_ideas = get_until_budget_full(budget,ideas_with_letters(area_id))
@@ -146,7 +146,7 @@ namespace :ballot do
       offset = 1
     end
 
-    Dir.mkdir("test_ballots_all") unless File.exists?("test_ballots_all")
+    Dir.mkdir("test_ballots_all") unless File.exist?("test_ballots_all")
 
     (1..10).each do |area_id|
       budget = BudgetBallotItem.get_area_budget(area_id)
@@ -162,7 +162,7 @@ namespace :ballot do
           end
         end
         puts html_out = create_html_doc(BudgetBallotItem.get_area_name(area_id),test_ballot_number+offset,selected_ideas_html)
-        Dir.mkdir("test_ballots_all/#{area_id}") unless File.exists?("test_ballots_all/#{area_id}")
+        Dir.mkdir("test_ballots_all/#{area_id}") unless File.exist?("test_ballots_all/#{area_id}")
         File.open("test_ballots_all/#{area_id}/#{area_id}_test_ballot_#{test_ballot_number+offset}.html","w").write(html_out)
       end
     end
