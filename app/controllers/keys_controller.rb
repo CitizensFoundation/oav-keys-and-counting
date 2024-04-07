@@ -25,6 +25,15 @@ class KeysController < ApplicationController
     puts "Request Method: #{request.method}"
     puts "Raw POST Body: #{request.raw_post}"
     puts "CHECKING PARAMS"
+    # Parse raw_post as JSON
+    try:
+      params = JSON.parse(request.raw_post)
+    except JSON::ParserError => e:
+      puts "Error parsing JSON: #{e}"
+      puts "Raw POST Body: #{request.raw_post}"
+      return render :json => {:error => "Error parsing JSON"}
+    end
+
     puts params.inspect
     passphrase = params["passphrase"]
     puts passphrase
