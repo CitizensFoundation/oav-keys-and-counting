@@ -18,6 +18,7 @@ services:
       - ./webserver/setup_app.sh:/etc/my_init.d/setup_app.sh
       - ../../oav-keys-and-counting:/home/app/oav_website
     command: /sbin/my_init
+    restart: always
 
   sidekiq:
     build:
